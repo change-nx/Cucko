@@ -26,7 +26,6 @@ http_token -> HTTP客户端Token(选填)
 
 ## 插件
 > 存放路径∶plugin/
-> 本插件未做bot自身上报相关处理,如需开启请注意插件编写防止刷屏
 
 示例∶test.php
 ```php
