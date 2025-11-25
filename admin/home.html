@@ -1,0 +1,273 @@
+<style>
+    :root {
+        --primary-color: #667eea;
+        --secondary-color: #764ba2;
+        --accent-color: #5a67d8;
+        --text-color: #2d3748;
+        --text-light: #718096;
+        --bg-color: #f7fafc;
+        --card-bg: #ffffff;
+        --shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .content-card {
+        background-color: var(--card-bg);
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        padding: 30px;
+        margin-bottom: 20px;
+    }
+
+    .content-title {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: var(--text-color);
+        font-weight: 600;
+    }
+
+    .cards-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .info-card {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: white;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: var(--shadow-lg);
+        transition: transform 0.3s ease;
+    }
+
+    .info-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .stats-card {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: var(--shadow);
+        border-left: 4px solid var(--primary-color);
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .card-header h3 {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .avatar-section {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        object-fit: cover;
+    }
+
+    .qq-info h4 {
+        font-size: 24px;
+        margin: 0 0 5px 0;
+        font-weight: 700;
+    }
+
+    .qq-info p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 14px;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 15px;
+        background: var(--bg-color);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .stat-item:hover {
+        background: rgba(102, 126, 234, 0.1);
+        transform: scale(1.05);
+    }
+
+    .stat-number {
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 5px;
+    }
+
+    .stat-label {
+        font-size: 14px;
+        color: var(--text-light);
+        font-weight: 500;
+    }
+
+    .loading-state {
+        text-align: center;
+        padding: 40px;
+        color: var(--text-light);
+    }
+
+    .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .error-state {
+        text-align: center;
+        padding: 40px;
+        color: #e53e3e;
+        background: #fed7d7;
+        border-radius: 8px;
+        margin: 20px 0;
+    }
+
+    .refresh-btn {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        margin-top: 10px;
+        transition: background 0.3s;
+    }
+
+    .refresh-btn:hover {
+        background: var(--accent-color);
+    }
+
+    @media (max-width: 768px) {
+        .cards-container {
+            grid-template-columns: 1fr;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .avatar-section {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="content-card">
+    
+    <div id="loading" class="loading-state">
+        <div class="loading-spinner"></div>
+        <p>正在加载数据...</p>
+    </div>
+    
+    <div id="error" class="error-state" style="display: none;">
+        <p>数据加载失败，请重试</p>
+        <button class="refresh-btn" onclick="loadHomeData()">重新加载</button>
+    </div>
+    
+    <div id="content" style="display: none;">
+        <div class="cards-container">
+            <!-- QQ信息卡片 -->
+            <div class="info-card">
+                <div class="card-header">
+                    <h3>账号信息</h3>
+                </div>
+                <div class="card-body">
+                    <div class="avatar-section">
+                        <img id="qqAvatar" src="" alt="QQ头像" class="avatar">
+                        <div class="qq-info">
+                            <h4 id="qqNumber">加载中...</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 统计信息卡片 -->
+            <div class="stats-card">
+                <div class="card-header">
+                    <h3>数据统计</h3>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number" id="logCount">0</div>
+                        <div class="stat-label">日志数量</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="pluginCount">0</div>
+                        <div class="stat-label">插件数量</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 页面加载时获取数据
+    document.addEventListener('DOMContentLoaded', function() {
+        loadHomeData();
+    });
+
+    async function loadHomeData() {
+        // 显示加载状态
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('error').style.display = 'none';
+        document.getElementById('content').style.display = 'none';
+        
+        try {
+            const response = await fetch('../api.php?type=home');
+            const result = await response.json();
+            
+            if (result) {
+                // 更新页面数据
+                document.getElementById('qqNumber').textContent = result.QQ || '未知';
+                document.getElementById('qqAvatar').src = result.image || 'default-avatar.png';
+                document.getElementById('logCount').textContent = result.log || 0;
+                document.getElementById('pluginCount').textContent = result.plugin || 0;
+                
+                // 显示内容
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+            } else {
+                throw new Error('数据格式错误');
+            }
+        } catch (error) {
+            console.error('加载数据失败:', error);
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+        }
+    }
+</script>

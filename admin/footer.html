@@ -1,0 +1,42 @@
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+    </footer>
+
+    <script>
+        // 侧滑栏切换
+        const navToggle = document.getElementById('navToggle');
+        const sidebar = document.getElementById('sidebar');
+        
+        navToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+            
+            // 切换按钮图标
+            if (sidebar.classList.contains('active')) {
+                navToggle.textContent = '✕';
+            } else {
+                navToggle.textContent = '☰';
+            }
+        });
+        
+        // 点击侧滑栏外部关闭侧滑栏
+        document.addEventListener('click', function(event) {
+            if (!sidebar.contains(event.target) && !navToggle.contains(event.target) && sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+                navToggle.textContent = '☰';
+            }
+        });
+        
+        // 高亮当前页面链接
+        const currentPage = window.location.href;
+        const navLinks = document.querySelectorAll('.sidebar-link');
+        
+        navLinks.forEach(link => {
+            if (link.href === currentPage) {
+                link.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>

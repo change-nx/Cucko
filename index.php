@@ -2,6 +2,7 @@
 ob_start();
 require("function.php");
 define("info",require("info.php"));
+define("登录账号",info["登录账号"]);
 
 $raw = file_get_contents("php://input");
 if (empty($raw)) {
@@ -23,6 +24,7 @@ if (!empty($Signature)) {
 $data = json_decode($raw,true);
 wlog($raw);
 define("raw",$raw);
+if ((string)$_SERVER['HTTP_X_Self_Id']==(string)登录账号&&!info["自触"]) exit;
 $post_type = $data["post_type"];
 
 

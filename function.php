@@ -22,7 +22,13 @@ $re = preg_replace("/\[CQ:json[^\]]*\]/","[卡片]",$re);
 $re = preg_replace("/\[CQ:reply[^\]]*\]/","[回复]",$re);
 $re = preg_replace("/\[CQ:file[^\]]*\]/","[文件]",$re);
 $re = preg_replace("/\[CQ:markdown[^\]]*\]/","[markdown]",$re);
-return $re;
+$rejson = [
+    '&amp;' => '&',
+    '&#91;' => '[',
+    '&#93;' => ']',
+    '&#44;' => ','
+];
+return str_replace(array_keys($rejson),array_values($rejson),$re);
 }
 
 function curl($url, $method, $headers, $params){

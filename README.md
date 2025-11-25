@@ -19,7 +19,9 @@
 return [
     "url" => "http://127.0.0.1:3000",
     "url_token" => "",
-    "http_token" => ""
+    "http_token" => "",
+    "登录账号" => ,
+    "自触" => false
 ];
 ```
 url -> HTTP服务器地址
@@ -28,6 +30,10 @@ url_token -> HTTP服务器Token
 
 http_token -> HTTP客户端Token(选填)
 
+登录账号 -> 机器人QQ
+
+自触 -> 需要开启napcat的机器人自身消息上报
+
 owner.php(主人列表)
 ```php
 <?php
@@ -35,6 +41,16 @@ $owner = [
     10001
 ];
 return $owner;
+```
+
+admin.php(后端)
+地址:域名/admin
+```php
+<?php
+return [
+    "username" => "admin",//用户名
+    "password" => "123456"//密码
+];
 ```
 
 ## 插件
