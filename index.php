@@ -24,12 +24,13 @@ if (!empty($Signature)) {
 $data = json_decode($raw,true);
 wlog($raw);
 define("raw",$raw);
-if ((string)$_SERVER['HTTP_X_Self_Id']==(string)登录账号&&!info["自触"]) exit;
+if($data["user_id"]==登录账号&&!info["自触"])exit;
 $post_type = $data["post_type"];
 
 
 switch ($post_type) {
     case "message":
+    case "message_sent":
         $message_type = $data["message_type"];
         switch ($message_type) {
             case "group":
