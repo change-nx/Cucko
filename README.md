@@ -1,5 +1,3 @@
-<div align="center">
-
 ![:name](https://count.getloli.com/@Cucko?name=Cucko&theme=&padding=6&offset=0&align=top&scale=1&pixelated=1&darkmode=auto)
 
 # Cucko
