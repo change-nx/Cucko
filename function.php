@@ -152,3 +152,44 @@ ob_start();
 Toplib_Lib_QRcode::png($content, false, QR_ECLEVEL_L, 7, 1, false, [255,255,255], [0,0,0]);
 return base64_encode(ob_get_clean());
 }
+
+function load($dir) {
+    $All = glob($dir . "/*.php");
+    foreach($All as $name) {
+        try {
+            require_once($name);
+        } catch (Throwable $e) {
+            wlog("插件加载失败: ".$name." 错误: ".$e->getMessage()." 行数: ".$e->getLine());
+            continue;
+        }
+    }
+}
+
+function prop($filePath, $key) {
+    if (!file_exists($filePath)) {
+        return null;
+    }
+    $lines = file($filePath, FILE_IGNORE_NEW_LINES);
+    if ($lines === false) {
+        return null;
+    }
+    foreach ($lines as $line) {
+        $line = trim($line);
+        
+        if (empty($line)) {
+            continue;
+        }
+        
+        if ($line[0] === '#' || (strlen($line) >= 2 && substr($line, 0, 2) === '//')) {
+            continue;
+        }
+        $pos = strpos($line, '=');
+        if ($pos !== false) {
+            $currentKey = trim(substr($line, 0, $pos));
+            if ($currentKey === $key) {
+                return trim(substr($line, $pos + 1));
+            }
+        }
+    }
+    return null;
+}

@@ -1,401 +1,550 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cucko - 后台管理</title>
+    <title>Cucko 后台管理</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-            --accent-color: #5a67d8;
-            --text-color: #2d3748;
-            --text-light: #718096;
-            --bg-color: #f7fafc;
-            --card-bg: #ffffff;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
-            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+            --primary-color: #87cefa;
+            --primary-light: #b3e0ff;
+            --primary-dark: #4a90e2;
+            --sidebar-bg: white;
+            --sidebar-border: #eef5ff;
+            --topbar-bg: white;
+            --content-bg: #f8fafc;
+            --card-bg: white;
+            --text-primary: #333;
+            --text-secondary: #5a8ec6;
+            --text-light: #a8d8ff;
+            --shadow-color: rgba(0, 105, 180, 0.05);
         }
-
+        
+        /* 黑夜模式变量 */
+        .dark-mode {
+            --primary-color: #64b5f6;
+            --primary-light: #90caf9;
+            --primary-dark: #1976d2;
+            --sidebar-bg: #1e1e2e;
+            --sidebar-border: #2d3746;
+            --topbar-bg: #1e1e2e;
+            --content-bg: #121212;
+            --card-bg: #252836;
+            --text-primary: #e4e6eb;
+            --text-secondary: #a8c6e0;
+            --text-light: #7bb4e3;
+            --shadow-color: rgba(0, 0, 0, 0.2);
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
         }
-
+        
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
+            background-color: var(--content-bg);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
         }
-
-        /* 顶部栏样式 */
-        .header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: white;
-            padding: 0 20px;
-            box-shadow: var(--shadow-lg);
+        
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* 侧边栏样式 */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--sidebar-border);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 10px var(--shadow-color);
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            height: 60px;
+            height: 100vh;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-header {
+            padding: 25px 20px;
+            border-bottom: 1px solid var(--sidebar-border);
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+        
+        .logo-icon i {
+            color: white;
+            font-size: 22px;
+        }
+        
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary-color);
+            letter-spacing: 0.5px;
+        }
+        
+        .sidebar-nav {
+            flex: 1;
+            padding: 25px 0;
+            overflow-y: auto;
+        }
+        
+        .nav-section {
+            margin-bottom: 25px;
+        }
+        
+        .nav-title {
+            font-size: 13px;
+            color: var(--text-light);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0 20px;
+            margin-bottom: 15px;
+        }
+        
+        .nav-list {
+            list-style: none;
+        }
+        
+        .nav-item {
+            margin-bottom: 5px;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+        
+        .nav-link:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: var(--primary-dark);
+            border-left-color: var(--primary-light);
+        }
+        
+        .dark-mode .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .nav-link.active {
+            background-color: rgba(0, 0, 0, 0.08);
+            color: var(--primary-dark);
+            border-left-color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .dark-mode .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+        
+        .nav-link i {
+            width: 24px;
+            margin-right: 12px;
+            font-size: 18px;
+            text-align: center;
+        }
+        
+        .nav-divider {
+            height: 1px;
+            background-color: var(--sidebar-border);
+            margin: 25px 20px;
+        }
+        
+        /* 主内容区域 */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+        
+        /* 顶部导航栏 */
+        .topbar {
+            height: 70px;
+            background-color: var(--topbar-bg);
+            border-bottom: 1px solid var(--sidebar-border);
             display: flex;
             align-items: center;
             justify-content: space-between;
+            padding: 0 30px;
+            box-shadow: 0 2px 10px var(--shadow-color);
+            position: sticky;
+            top: 0;
+            z-index: 90;
         }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
+        
+        .page-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary-color);
         }
-
-        .logo {
-            font-size: 24px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-        }
-
-        .logo-icon {
-            margin-right: 10px;
-            font-size: 28px;
-        }
-
-        .header-controls {
+        
+        .topbar-controls {
             display: flex;
             align-items: center;
             gap: 15px;
         }
-
-        .nav-toggle {
-            background: none;
+        
+        .theme-toggle-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.05);
             border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 5px;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        .logout-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s;
             display: flex;
             align-items: center;
-            gap: 5px;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--primary-color);
+            font-size: 18px;
         }
-
-        .logout-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-1px);
+        
+        .dark-mode .theme-toggle-btn {
+            background-color: rgba(255, 255, 255, 0.05);
         }
-
-        .nav-toggle:hover {
+        
+        .theme-toggle-btn:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            transform: rotate(15deg);
+        }
+        
+        .dark-mode .theme-toggle-btn:hover {
             background-color: rgba(255, 255, 255, 0.1);
         }
-
-        /* 侧滑栏样式 */
-        .sidebar {
-            position: fixed;
-            top: 60px;
-            right: 0;
-            width: 100%;
-            background-color: var(--card-bg);
-            box-shadow: var(--shadow-lg);
-            border-radius: 0 0 0 12px;
-            transform: translateY(-100%);
-            opacity: 0;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
-            z-index: 999;
-            overflow: hidden;
-            max-width: 300px;
-            margin: 0 auto;
-            right: 20px;
-        }
-
-        .sidebar.active {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        .sidebar-menu {
-            list-style: none;
-            padding: 20px 0;
-        }
-
-        .sidebar-item {
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .sidebar-link {
+        
+        .logout-btn {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: var(--text-secondary);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
-            padding: 15px 25px;
-            color: var(--text-color);
-            text-decoration: none;
-            transition: all 0.3s;
-            font-weight: 500;
         }
-
-        .sidebar-link:hover {
-            background-color: rgba(102, 126, 234, 0.1);
-            color: var(--primary-color);
-            padding-left: 30px;
+        
+        .dark-mode .logout-btn {
+            background-color: rgba(255, 255, 255, 0.05);
         }
-
-        .sidebar-link.active {
-            background-color: rgba(102, 126, 234, 0.15);
-            color: var(--primary-color);
-            border-right: 3px solid var(--primary-color);
+        
+        .logout-btn:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            color: var(--primary-dark);
         }
-
-        .sidebar-icon {
-            margin-right: 12px;
-            font-size: 18px;
-            width: 24px;
-            text-align: center;
+        
+        .dark-mode .logout-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
-
-        /* 主内容区域 */
-        .main-content {
-            margin-top: 80px;
-            padding: 20px;
-            min-height: calc(100vh - 80px);
+        
+        .logout-btn i {
+            margin-right: 8px;
         }
-
+        
+        /* 内容区域 */
+        .content-area {
+            flex: 1;
+            padding: 30px;
+            background-color: var(--content-bg);
+        }
+        
         .content-card {
             background-color: var(--card-bg);
             border-radius: 12px;
-            box-shadow: var(--shadow);
             padding: 30px;
-            margin-bottom: 20px;
-        }
-
-        .content-title {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: var(--text-color);
-            font-weight: 600;
-        }
-
-        /* 弹窗样式 */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
+            box-shadow: 0 5px 20px var(--shadow-color);
+            border: 1px solid var(--sidebar-border);
+            min-height: 400px;
         }
         
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            max-width: 400px;
-            width: 90%;
+        /* 页脚样式 */
+        .main-footer {
+            padding: 20px 30px;
+            background-color: var(--topbar-bg);
+            border-top: 1px solid var(--sidebar-border);
             text-align: center;
+            transition: all 0.3s ease;
         }
         
-        .modal-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: #333;
-        }
-        
-        .modal-message {
-            margin-bottom: 20px;
-            color: #666;
-            line-height: 1.5;
-        }
-        
-        .modal-btn {
-            padding: 10px 20px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
+        .footer-content {
+            color: var(--text-light);
             font-size: 14px;
-            margin: 0 5px;
         }
-
-        .modal-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
+        
+        .footer-version {
+            margin-top: 5px;
+            font-size: 12px;
+            color: var(--text-secondary);
         }
-
-        .modal-btn.cancel {
-            background: #718096;
-        }
-
-        .modal-btn.confirm {
-            background: #e53e3e;
-        }
-
-        /* 响应式设计 */
-        @media (max-width: 768px) {
+        
+        /* 响应式设计 - 移动端适配 */
+        @media (max-width: 992px) {
             .sidebar {
-                right: 0;
-                max-width: 100%;
-                border-radius: 0;
+                width: 80px;
             }
             
-            .logo {
+            .logo-text, .nav-title, .nav-link span {
+                display: none;
+            }
+            
+            .nav-link {
+                justify-content: center;
+                padding: 16px 0;
+            }
+            
+            .nav-link i {
+                margin-right: 0;
                 font-size: 20px;
             }
-
+            
+            .sidebar-header {
+                justify-content: center;
+                padding: 25px 0;
+            }
+            
+            .logo-icon {
+                margin-right: 0;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .topbar {
+                padding: 0 20px;
+            }
+            
+            .content-area {
+                padding: 20px;
+            }
+            
+            .content-card {
+                padding: 20px;
+            }
+            
             .logout-btn span {
                 display: none;
             }
-
+            
             .logout-btn {
-                padding: 8px;
+                padding: 10px;
+                width: 40px;
+                height: 40px;
+                justify-content: center;
+            }
+            
+            .logout-btn i {
+                margin-right: 0;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .sidebar {
+                width: 70px;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+            
+            .logo-icon {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .logo-icon i {
+                font-size: 18px;
+            }
+            
+            .nav-link i {
+                font-size: 18px;
+            }
+            
+            .page-title {
+                font-size: 18px;
+            }
+            
+            .topbar-controls {
+                gap: 10px;
+            }
+        }
+        
+        /* 移动端菜单切换 */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--primary-color);
+            cursor: pointer;
+            margin-right: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 99;
+            }
+            
+            .sidebar-overlay.mobile-open {
+                display: block;
             }
         }
     </style>
 </head>
 <body>
-    <!-- 顶部栏 -->
-    <header class="header">
-        <div class="logo-container">
-            <div class="logo">
-                Cucko admin control
+    <div class="app-container">
+        <!-- 侧边栏 -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <i class="fas fa-cloud"></i>
+                </div>
+                <div class="logo-text">Cucko</div>
             </div>
-        </div>
-        <div class="header-controls">
-            <button class="logout-btn" id="logoutBtn">
-                <span>退出登录</span>✖️
-            </button>
-            <button class="nav-toggle" id="navToggle">
-                ☰
-            </button>
-        </div>
-    </header>
-
-    <!-- 侧滑栏 -->
-    <nav class="sidebar" id="sidebar">
-        <ul class="sidebar-menu">
-            <li class="sidebar-item">
-                <a href="main.php?type=main" class="sidebar-link">
-                    <span class="sidebar-icon">🏠</span>
-                    首页
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="main.php?type=log" class="sidebar-link">
-                    <span class="sidebar-icon">📜</span>
-                    日志
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="main.php?type=market" class="sidebar-link">
-                    <span class="sidebar-icon">🛒</span>
-                    市场
-                </a>
-            </li>
-        </ul>
-    </nav>
-
-    <!-- 确认退出弹窗 -->
-    <div class="modal" id="logoutModal">
-        <div class="modal-content">
-            <div class="modal-title">确认退出</div>
-            <div class="modal-message">您确定要退出登录吗？</div>
-            <div class="modal-buttons">
-                <button class="modal-btn cancel" onclick="closeLogoutModal()">取消</button>
-                <button class="modal-btn confirm" onclick="confirmLogout()">确定退出</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 主内容区域 -->
-    <main class="main-content">
-
-<script>
-    // 侧滑栏切换
-    const navToggle = document.getElementById('navToggle');
-    const sidebar = document.getElementById('sidebar');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const logoutModal = document.getElementById('logoutModal');
-    
-    navToggle.addEventListener('click', function() {
-        sidebar.classList.toggle('active');
-        
-        // 切换按钮图标
-        if (sidebar.classList.contains('active')) {
-            navToggle.textContent = '✕';
-        } else {
-            navToggle.textContent = '☰';
-        }
-    });
-    
-    // 点击侧滑栏外部关闭侧滑栏
-    document.addEventListener('click', function(event) {
-        if (!sidebar.contains(event.target) && !navToggle.contains(event.target) && sidebar.classList.contains('active')) {
-            sidebar.classList.remove('active');
-            navToggle.textContent = '☰';
-        }
-    });
-    
-    // 高亮当前页面链接
-    const currentPage = window.location.href;
-    const navLinks = document.querySelectorAll('.sidebar-link');
-    
-    navLinks.forEach(link => {
-        if (link.href === currentPage) {
-            link.classList.add('active');
-        }
-    });
-
-    // 退出登录功能
-    logoutBtn.addEventListener('click', function() {
-        logoutModal.style.display = 'flex';
-    });
-
-    function closeLogoutModal() {
-        logoutModal.style.display = 'none';
-    }
-
-    async function confirmLogout() {
-        try {
-            const response = await fetch('../api.php?type=logout');
-            const result = await response.json();
             
-            if (result.status) {
-                // 退出成功，跳转到登录页面
-                window.location.href = 'index.html';
-            } else {
-                alert('退出失败: ' + result.msg);
-            }
-        } catch (error) {
-            alert('退出失败: ' + error.message);
-        } finally {
-            closeLogoutModal();
-        }
-    }
-
-    // 点击模态框背景关闭
-    logoutModal.addEventListener('click', function(e) {
-        if (e.target === logoutModal) {
-            closeLogoutModal();
-        }
-    });
-</script>
+            <div class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-title">导航</div>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="main.php?type=home" class="nav-link <?php echo ($type == 'home') ? 'active' : ''; ?>">
+                                <i class="fas fa-tachometer-alt"></i>
+                                <span>仪表盘</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="main.php?type=log" class="nav-link <?php echo ($type == 'log') ? 'active' : ''; ?>">
+                                <i class="fas fa-clipboard-list"></i>
+                                <span>日志</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="main.php?type=plugin" class="nav-link <?php echo ($type == 'plugin') ? 'active' : ''; ?>">
+                                <i class="fas fa-puzzle-piece"></i>
+                                <span>插件</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="main.php?type=set" class="nav-link <?php echo ($type == 'set') ? 'active' : ''; ?>">
+                                <i class="fas fa-cog"></i>
+                                <span>设置</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="nav-divider"></div>
+                
+                <div class="nav-section">
+                    <div class="nav-title">其他</div>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="https://docs.qq.com/aio/DSVFvT0piY25sSEVv" target="_blank" class="nav-link">
+                                <i class="fas fa-book"></i>
+                                <span>文档</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="https://qm.qq.com/q/6xUhOJhEre" target="_blank" class="nav-link">
+                                <i class="fas fa-users"></i>
+                                <span>官群</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 移动端遮罩 -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        
+        <!-- 主内容区域 -->
+        <div class="main-content">
+            <!-- 顶部导航栏 -->
+            <div class="topbar">
+                <div style="display: flex; align-items: center;">
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="page-title" id="pageTitle">
+                        <?php
+                        $pageTitles = [
+                            'home' => '仪表盘',
+                            'log' => '日志',
+                            'plugin' => '管理',
+                            'set' => '设置'
+                        ];
+                        echo isset($pageTitles[$type]) ? $pageTitles[$type] : '仪表盘';
+                        ?>
+                    </div>
+                </div>
+                
+                <div class="topbar-controls">
+                    <button class="theme-toggle-btn" id="themeToggleBtn" title="切换主题">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+                    
+                    <button class="logout-btn" onclick="logout()" title="退出登录">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>退出登录</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 内容区域 -->
+            <div class="content-area">
+                <div class="content-card" id="contentCard">

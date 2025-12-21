@@ -1,41 +1,173 @@
-    </main>
-
-    <!-- 页脚 -->
-    <footer class="footer">
-    </footer>
+                </div>
+            </div>
+            
+            <!-- 页脚 -->
+            <footer class="main-footer">
+                <div class="footer-content">
+                    <p>© <span id="currentYear"></span> Cucko 后台管理</p>
+                </div>
+            </footer>
+        </div>
+    </div>
 
     <script>
-        // 侧滑栏切换
-        const navToggle = document.getElementById('navToggle');
-        const sidebar = document.getElementById('sidebar');
+        // 设置当前年份（版权时间自动更新）
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
         
-        navToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('active');
+        // 初始化主题
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
             
-            // 切换按钮图标
-            if (sidebar.classList.contains('active')) {
-                navToggle.textContent = '✕';
+            if (savedTheme === 'dark') {
+                body.classList.add('dark-mode');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+                themeIcon.title = '切换到白天模式';
             } else {
-                navToggle.textContent = '☰';
+                body.classList.remove('dark-mode');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+                themeIcon.title = '切换到黑夜模式';
             }
-        });
+        }
         
-        // 点击侧滑栏外部关闭侧滑栏
-        document.addEventListener('click', function(event) {
-            if (!sidebar.contains(event.target) && !navToggle.contains(event.target) && sidebar.classList.contains('active')) {
-                sidebar.classList.remove('active');
-                navToggle.textContent = '☰';
+        // 切换主题
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            
+            if (body.classList.contains('dark-mode')) {
+                // 切换到白天模式
+                body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+                themeIcon.title = '切换到黑夜模式';
+                showMessage('已切换为白天模式', 'success');
+            } else {
+                // 切换到黑夜模式
+                body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+                themeIcon.title = '切换到白天模式';
+                showMessage('已切换为黑夜模式', 'success');
             }
-        });
+        }
         
-        // 高亮当前页面链接
-        const currentPage = window.location.href;
-        const navLinks = document.querySelectorAll('.sidebar-link');
+        // 移动端菜单切换
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
         
-        navLinks.forEach(link => {
-            if (link.href === currentPage) {
-                link.classList.add('active');
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('mobile-open');
+                sidebarOverlay.classList.toggle('mobile-open');
+            });
+            
+            sidebarOverlay.addEventListener('click', function() {
+                sidebar.classList.remove('mobile-open');
+                sidebarOverlay.classList.remove('mobile-open');
+            });
+        }
+        
+        // 主题切换按钮事件
+        document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
+        
+        // 退出登录函数
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                // 调用退出登录API
+                fetch('../api.php?type=logout')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.code === true) {
+                            // 跳转到登录页
+                            window.location.href = 'login.html';
+                        } else {
+                            alert('退出登录失败，请重试');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('退出登录时出错:', error);
+                        alert('网络错误，请稍后重试');
+                    });
             }
+        }
+        
+        // 显示消息
+        function showMessage(text, type) {
+            // 创建消息元素
+            const messageDiv = document.createElement('div');
+            messageDiv.textContent = text;
+            messageDiv.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 30px;
+                padding: 15px 25px;
+                border-radius: 10px;
+                font-size: 14px;
+                font-weight: 500;
+                z-index: 9999;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                animation: fadeIn 0.3s, fadeOut 0.3s 2.7s;
+            `;
+            
+            if (type === 'success') {
+                messageDiv.style.backgroundColor = 'var(--primary-color)';
+                messageDiv.style.color = 'white';
+            } else if (type === 'error') {
+                messageDiv.style.backgroundColor = '#ff6b6b';
+                messageDiv.style.color = 'white';
+            }
+            
+            // 添加到页面
+            document.body.appendChild(messageDiv);
+            
+            // 3秒后移除
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
+        }
+        
+        // 根据当前页面类型高亮菜单项
+        function highlightActiveMenu() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const currentType = '<?php echo $type; ?>';
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                
+                // 检查链接是否匹配当前页面类型
+                const href = link.getAttribute('href');
+                if (href && href.includes('type=' + currentType)) {
+                    link.classList.add('active');
+                }
+            });
+        }
+        
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            initTheme();
+            highlightActiveMenu();
+            
+            // 添加CSS动画
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeIn {
+                    from { opacity: 0; transform: translateY(-20px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                
+                @keyframes fadeOut {
+                    from { opacity: 1; transform: translateY(0); }
+                    to { opacity: 0; transform: translateY(-20px); }
+                }
+            `;
+            document.head.appendChild(style);
         });
     </script>
 </body>

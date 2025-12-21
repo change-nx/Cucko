@@ -7,7 +7,7 @@ define("登录账号",info["登录账号"]);
 $raw = file_get_contents("php://input");
 if (empty($raw)) {
     ob_end_clean();
-    die("Cucko运行成功");
+    header('Location: admin/login.html');
 }
 
 
@@ -131,7 +131,7 @@ switch ($post_type) {
     
 }
 require("bot.php");
-load();
+load_plugin();//加载插件
 ob_end_clean();
 $json = [
     "status" => true
@@ -141,11 +141,14 @@ echo $json;
 exit;
 
 
-function load() {
-    $All = glob(__DIR__."/plugin/*.php");
+function load_plugin() {
+    $All = glob(__DIR__ . "/plugin/*", GLOB_ONLYDIR);
     foreach($All as $name) {
         try {
-            require_once($name);
+            $status = prop($name . "/info.prop","status");
+            if ($status == "true") {
+                require_once($name . "/main.php");
+            }
         } catch (Throwable $e) {
             wlog("插件加载失败: ".$name." 错误: ".$e->getMessage()." 行数: ".$e->getLine());
             continue;

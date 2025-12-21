@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cucko 后台登录</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            background-image: linear-gradient(135deg, #f0f8ff 0%, #f5f9ff 100%);
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 420px;
+            padding: 10px;
+        }
+        
+        .login-card {
+            background-color: white;
+            border-radius: 16px;
+            padding: 40px 35px;
+            box-shadow: 0 10px 30px rgba(0, 105, 180, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(173, 216, 230, 0.3);
+        }
+        
+        .login-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 105, 180, 0.12);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+        
+        .logo {
+            color: #a8d8ff;
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        
+        .title {
+            color: #87cefa;
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            color: #a0c8e6;
+            font-size: 14px;
+            margin-top: 8px;
+            font-weight: 400;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .form-label {
+            display: block;
+            color: #4a90e2;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            margin-left: 3px;
+        }
+        
+        .input-container {
+            position: relative;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a8d8ff;
+            font-size: 18px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 16px 16px 16px 50px;
+            border: 1px solid #e1f0ff;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background-color: #f9fcff;
+            color: #333;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #a8d8ff;
+            box-shadow: 0 0 0 3px rgba(168, 216, 255, 0.2);
+            background-color: white;
+        }
+        
+        .form-input::placeholder {
+            color: #b3d9ff;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background-color: #b3e0ff;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .login-btn:hover {
+            background-color: #99d6ff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(168, 216, 255, 0.4);
+        }
+        
+        .login-btn:active {
+            transform: translateY(0);
+        }
+        
+        .login-btn:disabled {
+            background-color: #d9f0ff;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .message {
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .error {
+            background-color: #ffe6e6;
+            color: #ff4d4d;
+            border: 1px solid #ffcccc;
+            display: block;
+        }
+        
+        .success {
+            background-color: #e6fff2;
+            color: #00b359;
+            border: 1px solid #ccffeb;
+            display: block;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #a8d8ff;
+            font-size: 13px;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .wave-bg {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            z-index: -1;
+            opacity: 0.3;
+        }
+        
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 30px 25px;
+            }
+            
+            .title {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-card">
+            <div class="header">
+                <div class="logo">
+                    <i class="fas fa-cloud"></i>
+                </div>
+                <h1 class="title">Cucko 后台登录</h1>
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" for="key">访问密钥</label>
+                    <div class="input-container">
+                        <div class="input-icon">
+                            <i class="fas fa-key"></i>
+                        </div>
+                        <input type="password" id="key" class="form-input" placeholder="请输入密钥" required>
+                    </div>
+                </div>
+                
+                <button type="submit" class="login-btn" id="loginButton">
+                    登录
+                </button>
+                
+                <div class="message" id="message"></div>
+            </form>
+            
+            <div class="footer">
+                <p>© Cucko 后台管理系统</p>
+            </div>
+        </div>
+    </div>
+    
+    <svg class="wave-bg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+        <path fill="#a8d8ff" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+    </svg>
+
+    <script>
+        // 页面加载时检查登录状态
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLoginStatus();
+        });
+        
+        // 检查登录状态
+        async function checkLoginStatus() {
+            try {
+                const response = await fetch('../api.php?type=check');
+                const data = await response.json();
+                
+                if (data.code === true) {
+                    // 如果已经登录，跳转到首页
+                    window.location.href = 'main.php?type=home';
+                }
+            } catch (error) {
+                console.error('检查登录状态时出错:', error);
+            }
+        }
+        
+        // 登录表单提交
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const keyInput = document.getElementById('key');
+            const loginButton = document.getElementById('loginButton');
+            const messageDiv = document.getElementById('message');
+            
+            const key = keyInput.value.trim();
+            
+            if (!key) {
+                showMessage('请输入访问密钥', 'error');
+                keyInput.focus();
+                return;
+            }
+            
+            // 禁用登录按钮并显示加载状态
+            loginButton.disabled = true;
+            loginButton.innerHTML = '<span class="loading"></span>登录中...';
+            messageDiv.style.display = 'none';
+            
+            try {
+                // 发送登录请求
+                const response = await fetch(`../api.php?type=login&key=${encodeURIComponent(key)}`);
+                const data = await response.json();
+                
+                if (data.code === true) {
+                    // 登录成功
+                    showMessage('登录成功！正在跳转...', 'success');
+                    
+                    // 延迟跳转，让用户看到成功消息
+                    setTimeout(() => {
+                        window.location.href = 'main.php?type=home';
+                    }, 1000);
+                } else {
+                    // 登录失败
+                    showMessage('登录失败：密钥错误或无效', 'error');
+                    loginButton.disabled = false;
+                    loginButton.innerHTML = '登录';
+                    keyInput.focus();
+                    keyInput.select();
+                }
+            } catch (error) {
+                // 网络错误
+                console.error('登录时出错:', error);
+                showMessage('网络错误，请稍后重试', 'error');
+                loginButton.disabled = false;
+                loginButton.innerHTML = '登录';
+            }
+        });
+        
+        // 显示消息
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
+        }
+        
+        // 添加输入框交互效果
+        const keyInput = document.getElementById('key');
+        keyInput.addEventListener('focus', function() {
+            this.parentElement.parentElement.classList.add('focused');
+        });
+        
+        keyInput.addEventListener('blur', function() {
+            this.parentElement.parentElement.classList.remove('focused');
+        });
+    </script>
+</body>
+</html>

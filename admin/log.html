@@ -1,108 +1,148 @@
 <style>
-    .content-card {
+    /* 日志页面基础样式 */
+    .logs-container {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        height: calc(100vh - 140px);
+        max-height: 800px;
+    }
+    
+    /* 日志列表部分 */
+    .logs-list-section {
         background-color: var(--card-bg);
         border-radius: 12px;
-        box-shadow: var(--shadow);
-        padding: 20px;
-        margin-bottom: 20px;
-    }
-
-    .content-title {
-        font-size: 24px;
-        margin-bottom: 20px;
-        color: var(--text-color);
-        font-weight: 600;
-    }
-
-    .tabs {
+        padding: 16px;
+        box-shadow: 0 2px 8px var(--shadow-color);
+        border: 1px solid var(--sidebar-border);
+        flex: 1;
+        min-height: 0;
         display: flex;
-        border-bottom: 1px solid #e1e5e9;
-        margin-bottom: 20px;
+        flex-direction: column;
     }
-
-    .tab {
-        padding: 12px 24px;
-        cursor: pointer;
-        border: none;
-        background: none;
-        font-size: 14px;
-        font-weight: 500;
-        color: var(--text-light);
-        border-bottom: 2px solid transparent;
-        transition: all 0.3s;
-    }
-
-    .tab.active {
+    
+    .section-title {
+        font-size: 18px;
+        font-weight: 600;
         color: var(--primary-color);
-        border-bottom-color: var(--primary-color);
-    }
-
-    .tab:hover {
-        color: var(--primary-color);
-    }
-
-    .tab-content {
-        display: none;
-    }
-
-    .tab-content.active {
-        display: block;
-    }
-
-    .group-list, .private-list {
-        max-height: 600px;
-        overflow-y: auto;
-    }
-
-    .group-item, .private-item {
-        padding: 15px;
-        border: 1px solid #e1e5e9;
-        border-radius: 8px;
-        margin-bottom: 10px;
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-
-    .group-item:hover, .private-item:hover {
-        border-color: var(--primary-color);
-        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
-    }
-
-    .group-header, .private-header {
+        margin-bottom: 16px;
         display: flex;
         align-items: center;
+        gap: 10px;
+        flex-shrink: 0;
+    }
+    
+    .section-title i {
+        font-size: 18px;
+    }
+    
+    /* 日志网格 */
+    .logs-grid {
+        display: grid;
         gap: 12px;
-    }
-
-    .group-avatar, .user-avatar {
-        width: 50px;
-        height: 50px;
-        border-radius: 8px;
-        object-fit: cover;
-    }
-
-    .group-info, .user-info {
+        overflow-y: auto;
         flex: 1;
+        min-height: 0;
+        padding-right: 4px;
     }
-
-    .group-name, .user-name {
+    
+    .logs-grid::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .logs-grid::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    
+    .logs-grid::-webkit-scrollbar-thumb {
+        background: rgba(var(--primary-rgb), 0.3);
+        border-radius: 3px;
+    }
+    
+    .logs-grid::-webkit-scrollbar-thumb:hover {
+        background: rgba(var(--primary-rgb), 0.5);
+    }
+    
+    .log-card {
+        background-color: rgba(var(--primary-rgb), 0.03);
+        border-radius: 10px;
+        padding: 16px;
+        border: 1px solid var(--sidebar-border);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .log-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px var(--shadow-color);
+        border-color: var(--primary-color);
+    }
+    
+    .log-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+    
+    .log-name {
         font-weight: 600;
-        margin-bottom: 4px;
+        color: var(--primary-color);
+        font-size: 15px;
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
-
-    .group-id, .user-id {
+    
+    .log-date {
         font-size: 12px;
-        color: var(--text-light);
+        color: var(--text-secondary);
     }
-
-    .message-count {
-        background: var(--primary-color);
-        color: white;
-        padding: 4px 8px;
-        border-radius: 12px;
-        font-size: 12px;
+    
+    .log-actions {
+        display: flex;
+        gap: 8px;
+        flex-shrink: 0;
     }
-
+    
+    .action-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(var(--primary-rgb), 0.1);
+        color: var(--primary-color);
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 16px;
+    }
+    
+    .action-btn:hover {
+        background-color: rgba(var(--primary-rgb), 0.2);
+    }
+    
+    .action-btn.view {
+        color: #4CAF50;
+        background-color: rgba(76, 175, 80, 0.1);
+    }
+    
+    .action-btn.view:hover {
+        background-color: rgba(76, 175, 80, 0.2);
+    }
+    
+    .action-btn.delete {
+        color: #ff6b6b;
+        background-color: rgba(255, 107, 107, 0.1);
+    }
+    
+    .action-btn.delete:hover {
+        background-color: rgba(255, 107, 107, 0.2);
+    }
+    
     /* 聊天界面样式 */
     .chat-container {
         position: fixed;
@@ -110,850 +150,804 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: white;
+        background: var(--content-bg);
         z-index: 2000;
         display: none;
         flex-direction: column;
     }
-
+    
     .chat-container.active {
         display: flex;
+        animation: fadeIn 0.3s ease;
     }
-
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
     .chat-header {
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-        color: white;
-        padding: 15px 20px;
+        background: var(--card-bg);
+        padding: 16px 20px;
         display: flex;
         align-items: center;
         gap: 12px;
+        border-bottom: 1px solid var(--sidebar-border);
+        box-shadow: 0 2px 8px var(--shadow-color);
+        position: sticky;
+        top: 0;
+        z-index: 10;
     }
-
+    
     .back-btn {
         background: none;
         border: none;
-        color: white;
+        color: var(--primary-color);
         font-size: 18px;
         cursor: pointer;
-        padding: 5px;
-    }
-
-    .chat-avatar {
+        padding: 8px;
         width: 40px;
         height: 40px;
-        border-radius: 50%;
-        object-fit: cover;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
     }
-
+    
+    .back-btn:hover {
+        background-color: rgba(var(--primary-rgb), 0.1);
+    }
+    
     .chat-info {
         flex: 1;
+        min-width: 0;
     }
-
+    
     .chat-name {
         font-weight: 600;
         font-size: 16px;
+        color: var(--primary-color);
+        margin-bottom: 2px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
-
+    
     .chat-id {
-        font-size: 12px;
-        opacity: 0.8;
+        font-size: 13px;
+        color: var(--text-secondary);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
-
+    
+    /* 消息列表样式 */
     .messages-container {
         flex: 1;
         padding: 20px;
         overflow-y: auto;
-        background: #f5f5f5;
-    }
-
-    .message {
+        background: var(--content-bg);
         display: flex;
-        margin-bottom: 15px;
-        max-width: 80%;
+        flex-direction: column;
+        gap: 20px;
     }
-
-    .message.self {
-        margin-left: auto;
-        flex-direction: row-reverse;
+    
+    .messages-container::-webkit-scrollbar {
+        width: 6px;
     }
-
-    .message-avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        object-fit: cover;
-        margin: 0 8px;
+    
+    .messages-container::-webkit-scrollbar-track {
+        background: transparent;
     }
-
-    .message-content {
-        background: white;
-        padding: 12px 16px;
+    
+    .messages-container::-webkit-scrollbar-thumb {
+        background: rgba(var(--primary-rgb), 0.3);
+        border-radius: 3px;
+    }
+    
+    .messages-container::-webkit-scrollbar-thumb:hover {
+        background: rgba(var(--primary-rgb), 0.5);
+    }
+    
+    /* 聊天消息样式 */
+    .chat-message {
+        max-width: 100%;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .message-bubble {
+        background: var(--card-bg);
         border-radius: 18px;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        padding: 12px 16px;
+        border: 1px solid var(--sidebar-border);
+        word-wrap: break-word;
+        word-break: break-all;
+        overflow-wrap: break-word;
+        max-width: 100%;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+        box-shadow: 0 2px 4px var(--shadow-color);
+    }
+    
+    .message-bubble:hover {
+        border-color: var(--primary-color);
+        box-shadow: 0 4px 12px var(--shadow-color);
+    }
+    
+    .message-bubble.copied {
+        border-color: #4CAF50;
+        background-color: rgba(76, 175, 80, 0.05);
+    }
+    
+    .message-content {
+        font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+        font-size: 13px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        color: var(--text-primary);
+    }
+    
+    .message-time {
+        font-size: 11px;
+        color: var(--text-light);
+        text-align: right;
+        opacity: 0.7;
+        margin-top: 4px;
+    }
+    
+    /* 警告消息样式 */
+    .warning-bubble {
+        background: rgba(255, 152, 0, 0.08);
+        border-radius: 18px;
+        padding: 12px 16px;
+        border: 1px solid rgba(255, 152, 0, 0.3);
+        word-wrap: break-word;
+        word-break: break-all;
+        overflow-wrap: break-word;
+        max-width: 100%;
+        cursor: pointer;
+        transition: all 0.2s ease;
         position: relative;
     }
-
-    .message.self .message-content {
-        background: var(--primary-color);
-        color: white;
+    
+    .warning-bubble:hover {
+        border-color: #ff9800;
+        box-shadow: 0 4px 12px rgba(255, 152, 0, 0.1);
     }
-
-    .message-text {
-        margin: 0;
-        line-height: 1.4;
-    }
-
-    .message-image {
-        max-width: 200px;
-        border-radius: 8px;
-        margin-top: 5px;
-        cursor: pointer;
-    }
-
-    .image-error {
+    
+    .warning-header {
         display: flex;
         align-items: center;
         gap: 8px;
-        padding: 8px 12px;
-        background: rgba(0, 0, 0, 0.05);
-        border-radius: 8px;
-        margin-top: 5px;
-        color: var(--text-light);
-    }
-
-    .message.self .image-error {
-        background: rgba(255, 255, 255, 0.2);
-    }
-
-    .message-audio {
-        background: rgba(0, 0, 0, 0.05);
-        padding: 8px 12px;
-        border-radius: 8px;
-        margin-top: 5px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-
-    .message.self .message-audio {
-        background: rgba(255, 255, 255, 0.2);
-    }
-
-    .message-audio:hover {
-        background: rgba(0, 0, 0, 0.08);
-    }
-
-    .message.self .message-audio:hover {
-        background: rgba(255, 255, 255, 0.3);
-    }
-
-    .audio-icon {
-        width: 16px;
-        height: 16px;
-        flex-shrink: 0;
-    }
-
-    .audio-playing .audio-icon {
-        color: var(--primary-color);
-    }
-
-    .audio-duration {
-        font-size: 12px;
-        color: var(--text-light);
-        margin-left: auto;
-        padding-left: 8px;
-    }
-
-    .message.self .audio-duration {
-        color: rgba(255, 255, 255, 0.7);
-    }
-
-    .audio-wave {
-        display: flex;
-        align-items: center;
-        gap: 2px;
-        margin-left: 8px;
-    }
-
-    .audio-bar {
-        width: 2px;
-        background-color: currentColor;
-        border-radius: 1px;
-        transition: height 0.3s ease;
-    }
-
-    .audio-playing .audio-bar {
-        animation: audioWave 1s ease-in-out infinite;
-    }
-
-    @keyframes audioWave {
-        0%, 100% { height: 4px; }
-        50% { height: 12px; }
-    }
-
-    .audio-bar:nth-child(1) { animation-delay: 0s; }
-    .audio-bar:nth-child(2) { animation-delay: 0.1s; }
-    .audio-bar:nth-child(3) { animation-delay: 0.2s; }
-    .audio-bar:nth-child(4) { animation-delay: 0.3s; }
-    .audio-bar:nth-child(5) { animation-delay: 0.4s; }
-
-    .message-video {
-        max-width: 200px;
-        border-radius: 8px;
-        margin-top: 5px;
-        cursor: pointer;
-    }
-
-    .media-placeholder {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 12px;
-        background: rgba(0, 0, 0, 0.05);
-        border-radius: 8px;
-        margin-top: 5px;
-    }
-
-    .message.self .media-placeholder {
-        background: rgba(255, 255, 255, 0.2);
-    }
-
-    .event-message {
-        text-align: center;
-        margin: 10px 0;
-        cursor: pointer;
-    }
-
-    .event-content {
-        display: inline-block;
-        background: rgba(0, 0, 0, 0.05);
-        padding: 8px 16px;
-        border-radius: 16px;
+        margin-bottom: 8px;
+        color: #ff9800;
+        font-weight: 500;
         font-size: 13px;
-        color: var(--text-light);
-        max-width: 70%;
     }
-
-    /* 元数据弹窗 */
-    .metadata-modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 3000;
-        display: none;
+    
+    .warning-content {
+        font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+        font-size: 13px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        color: var(--text-primary);
+    }
+    
+    .copy-hint {
+        position: absolute;
+        top: -10px;
+        right: 10px;
+        background-color: var(--primary-color);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+        z-index: 2;
+    }
+    
+    .message-bubble:hover .copy-hint,
+    .warning-bubble:hover .copy-hint {
+        opacity: 1;
+    }
+    
+    /* 加载状态 */
+    .loading-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--text-secondary);
+        flex: 1;
+        display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
     }
-
-    .metadata-modal.active {
-        display: flex;
+    
+    .loading-spinner {
+        width: 36px;
+        height: 36px;
+        border: 3px solid var(--sidebar-border);
+        border-top-color: var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 12px;
     }
-
-    .metadata-content {
-        background: white;
-        padding: 20px;
-        border-radius: 12px;
-        max-width: 90%;
-        max-height: 80%;
-        overflow-y: auto;
-        width: 500px;
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
     }
-
-    .metadata-title {
-        font-size: 18px;
-        font-weight: 600;
-        margin-bottom: 15px;
-    }
-
-    .metadata-info {
-        margin-bottom: 15px;
-        padding: 10px;
-        background: #f8f9fa;
-        border-radius: 6px;
-    }
-
-    .metadata-time {
+    
+    .loading-text {
         font-size: 14px;
-        color: var(--text-light);
-        margin-bottom: 10px;
     }
-
-    .metadata-json {
-        background: #f8f9fa;
-        padding: 15px;
-        border-radius: 8px;
-        font-family: 'Courier New', monospace;
-        font-size: 12px;
-        white-space: pre-wrap;
-        word-break: break-all;
-        max-height: 400px;
-        overflow-y: auto;
-        overflow-x: auto;
-    }
-
-    .close-btn {
-        background: var(--primary-color);
-        color: white;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 6px;
-        cursor: pointer;
-        margin-top: 15px;
-    }
-
-    .loading {
-        text-align: center;
-        padding: 40px;
-        color: var(--text-light);
-    }
-
-    .error {
-        text-align: center;
-        padding: 40px;
-        color: #e53e3e;
-        background: #fed7d7;
-        border-radius: 8px;
-    }
-
+    
+    /* 空状态 */
     .empty-state {
         text-align: center;
-        padding: 40px;
+        padding: 40px 20px;
+        color: var(--text-secondary);
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .empty-icon {
+        font-size: 36px;
+        color: var(--primary-light);
+        margin-bottom: 12px;
+    }
+    
+    .empty-text {
+        font-size: 15px;
+        margin-bottom: 8px;
+    }
+    
+    .empty-subtext {
+        font-size: 13px;
         color: var(--text-light);
+    }
+    
+    /* 复制提示 */
+    .copy-notification {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.9);
+        background-color: var(--primary-color);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        z-index: 1002;
+        opacity: 0;
+        transition: all 0.3s ease;
+        pointer-events: none;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+    
+    .copy-notification.show {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    
+    /* 响应式设计 */
+    @media (max-width: 767px) {
+        .logs-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .action-btn span {
+            display: none;
+        }
+        
+        .messages-container {
+            padding: 16px;
+        }
+        
+        .message-bubble, .warning-bubble {
+            padding: 10px 14px;
+        }
+        
+        .message-content, .warning-content {
+            font-size: 12px;
+        }
+    }
+    
+    @media (min-width: 768px) {
+        .logs-grid {
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        }
+        
+        .action-btn span {
+            display: none;
+        }
+    }
+    
+    @media (min-width: 1024px) {
+        .logs-grid {
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        }
     }
 </style>
 
-<div class="content-card">
-    <h1 class="content-title">消息日志</h1>
-    
-    <div class="tabs">
-        <button class="tab active" data-tab="group">群聊</button>
-        <button class="tab" data-tab="private">私聊</button>
-        <button class="tab" data-tab="error">错误</button>
-    </div>
-
-    <div id="loading" class="loading">
-        <div class="loading-spinner"></div>
-        <p>正在加载日志数据...</p>
-    </div>
-
-    <div id="error" class="error" style="display: none;">
-        <p>加载日志数据失败</p>
-        <button class="refresh-btn" onclick="loadLogData()">重新加载</button>
-    </div>
-
-    <!-- 群聊日志 -->
-    <div id="group-tab" class="tab-content active">
-        <div id="group-list" class="group-list"></div>
-    </div>
-
-    <!-- 私聊日志 -->
-    <div id="private-tab" class="tab-content">
-        <div id="private-list" class="private-list"></div>
-    </div>
-
-    <!-- 错误日志 -->
-    <div id="error-tab" class="tab-content">
-        <div id="error-list" class="error-list"></div>
+<div class="logs-container">
+    <!-- 日志列表部分 -->
+    <div class="logs-list-section">
+        <div class="section-title">
+            <i class="fas fa-file-alt"></i>
+            <span>日志文件</span>
+        </div>
+        
+        <div class="logs-grid" id="logsGrid">
+            <!-- 日志卡片将通过JS动态生成 -->
+        </div>
+        
+        <!-- 加载状态 -->
+        <div class="loading-state" id="logsLoading">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">正在加载日志列表...</div>
+        </div>
+        
+        <!-- 空状态 -->
+        <div class="empty-state" id="logsEmpty" style="display: none;">
+            <div class="empty-icon">
+                <i class="fas fa-file"></i>
+            </div>
+            <div class="empty-text">暂无日志文件</div>
+            <div class="empty-subtext">系统尚未生成任何日志文件</div>
+            <button class="action-btn view" onclick="fetchLogsList()" style="margin-top: 12px;">
+                <i class="fas fa-redo"></i>
+            </button>
+        </div>
     </div>
 </div>
 
 <!-- 聊天界面 -->
-<div id="chat-container" class="chat-container">
+<div class="chat-container" id="chatContainer">
     <div class="chat-header">
-        <button class="back-btn" onclick="closeChat()">←</button>
-        <img id="chat-avatar" src="" alt="" class="chat-avatar">
+        <button class="back-btn" onclick="closeLogDetail()">
+            <i class="fas fa-arrow-left"></i>
+        </button>
         <div class="chat-info">
-            <div id="chat-name" class="chat-name"></div>
-            <div id="chat-id" class="chat-id"></div>
+            <div class="chat-name" id="chatName"></div>
+            <div class="chat-id" id="chatId"></div>
         </div>
     </div>
-    <div id="messages-container" class="messages-container"></div>
+    
+    <div class="messages-container" id="messagesContainer">
+        <!-- 日志内容将以消息气泡形式显示 -->
+    </div>
 </div>
 
-<!-- 元数据弹窗 -->
-<div id="metadata-modal" class="metadata-modal">
-    <div class="metadata-content">
-        <div class="metadata-title">消息详情</div>
-        <div class="metadata-info">
-            <div class="metadata-time" id="metadata-time"></div>
-            <div id="metadata-preview"></div>
-        </div>
-        <div class="metadata-title">元数据</div>
-        <pre id="metadata-json" class="metadata-json"></pre>
-        <button class="close-btn" onclick="closeMetadata()">关闭</button>
-    </div>
+<!-- 复制提示 -->
+<div class="copy-notification" id="copyNotification">
+    <i class="fas fa-check"></i> 已复制
 </div>
 
 <script>
-    let logData = null;
-    let currentQQ = null;
-    let currentAudio = null;
-
-    // 页面加载时获取数据
+    // 全局变量
+    let allLogs = [];
+    let currentLogFile = '';
+    let currentLogContent = [];
+    let isChatViewActive = false;
+    
+    // 页面加载时获取日志列表
     document.addEventListener('DOMContentLoaded', function() {
-        loadLogData();
-        setupTabs();
+        fetchLogsList();
+        setupMessageCopy();
     });
-
-    // 加载日志数据
-    async function loadLogData() {
-        document.getElementById('loading').style.display = 'block';
-        document.getElementById('error').style.display = 'none';
-
+    
+    // 设置消息复制功能
+    function setupMessageCopy() {
+        // 长按复制（移动端）
+        document.addEventListener('touchstart', function(e) {
+            const bubble = e.target.closest('.message-bubble, .warning-bubble');
+            if (bubble) {
+                bubble.startTime = Date.now();
+                bubble.touchTimer = setTimeout(() => {
+                    copyMessageContent(bubble);
+                }, 800);
+            }
+        });
+        
+        document.addEventListener('touchend', function(e) {
+            const bubble = e.target.closest('.message-bubble, .warning-bubble');
+            if (bubble && bubble.touchTimer) {
+                clearTimeout(bubble.touchTimer);
+            }
+        });
+        
+        document.addEventListener('touchmove', function(e) {
+            const bubble = e.target.closest('.message-bubble, .warning-bubble');
+            if (bubble && bubble.touchTimer) {
+                clearTimeout(bubble.touchTimer);
+            }
+        });
+        
+        // 双击复制（桌面端）
+        document.addEventListener('dblclick', function(e) {
+            if (window.innerWidth >= 768) {
+                const bubble = e.target.closest('.message-bubble, .warning-bubble');
+                if (bubble) {
+                    copyMessageContent(bubble);
+                }
+            }
+        });
+    }
+    
+    // 获取日志列表
+    async function fetchLogsList() {
+        showElement('logsLoading');
+        hideElement('logsEmpty');
+        
         try {
-            const response = await fetch('../api.php?type=log');
-            logData = await response.json();
-            currentQQ = logData.QQ;
+            const response = await fetch('../api.php?type=log&action=list');
+            allLogs = await response.json();
             
-            renderGroupList();
-            renderPrivateList();
-            renderErrorList();
-            
-            document.getElementById('loading').style.display = 'none';
+            renderLogsGrid();
         } catch (error) {
-            console.error('加载日志失败:', error);
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('error').style.display = 'block';
+            console.error('获取日志列表失败:', error);
+            showToast('无法加载日志列表', 'error');
+        } finally {
+            hideElement('logsLoading');
         }
     }
-
-    // 标签页切换
-    function setupTabs() {
-        const tabs = document.querySelectorAll('.tab');
-        tabs.forEach(tab => {
-            tab.addEventListener('click', function() {
-                // 移除所有active类
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    
+    // 渲染日志网格
+    function renderLogsGrid() {
+        const logsGrid = document.getElementById('logsGrid');
+        
+        if (!allLogs || allLogs.length === 0) {
+            showElement('logsEmpty');
+            logsGrid.innerHTML = '';
+            return;
+        }
+        
+        hideElement('logsEmpty');
+        
+        // 按日期倒序排序
+        const sortedLogs = [...allLogs].sort((a, b) => {
+            const dateA = extractDateFromFilename(a);
+            const dateB = extractDateFromFilename(b);
+            return dateB - dateA; // 最新的在前
+        });
+        
+        logsGrid.innerHTML = sortedLogs.map(logFile => {
+            const dateStr = extractDateFromFilename(logFile);
+            const formattedDate = formatDate(dateStr);
+            
+            return `
+                <div class="log-card" onclick="viewLog('${logFile}')">
+                    <div class="log-card-header">
+                        <div style="flex: 1; min-width: 0;">
+                            <div class="log-name" title="${logFile}">${logFile}</div>
+                        </div>
+                        <div class="log-actions">
+                            <button class="action-btn view" onclick="viewLog('${logFile}'); event.stopPropagation();" title="查看">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteLogPrompt('${logFile}'); event.stopPropagation();" title="删除">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="log-date">${formattedDate}</div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    // 从文件名提取日期
+    function extractDateFromFilename(filename) {
+        const match = filename.match(/(\d{4}-\d{2}-\d{2})/);
+        return match ? match[1] : 'Unknown';
+    }
+    
+    // 格式化日期
+    function formatDate(dateStr) {
+        if (dateStr === 'Unknown') return '未知日期';
+        
+        try {
+            const date = new Date(dateStr);
+            const now = new Date();
+            const diffTime = now - date;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays === 0) return '今天';
+            if (diffDays === 1) return '昨天';
+            if (diffDays < 7) return `${diffDays}天前`;
+            
+            return dateStr.replace(/-/g, '/');
+        } catch (e) {
+            return dateStr;
+        }
+    }
+    
+    // 查看日志内容（聊天界面形式）
+    async function viewLog(logFile) {
+        currentLogFile = logFile;
+        
+        // 显示聊天界面
+        const chatContainer = document.getElementById('chatContainer');
+        const chatName = document.getElementById('chatName');
+        const chatId = document.getElementById('chatId');
+        
+        chatName.textContent = logFile;
+        chatId.textContent = '日志文件';
+        chatContainer.classList.add('active');
+        isChatViewActive = true;
+        
+        // 显示加载状态
+        const messagesContainer = document.getElementById('messagesContainer');
+        messagesContainer.innerHTML = `
+            <div class="loading-state">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">正在加载日志内容...</div>
+            </div>
+        `;
+        
+        try {
+            const response = await fetch(`../api.php?type=log&action=content&name=${encodeURIComponent(logFile)}`);
+            const textContent = await response.text();
+            
+            if (!textContent || textContent.trim() === '') {
+                messagesContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-file-exclamation"></i>
+                        </div>
+                        <div class="empty-text">日志内容为空</div>
+                        <div class="empty-subtext">该日志文件没有内容</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 分割日志行
+            const lines = textContent.split('\n').filter(line => line.trim() !== '');
+            currentLogContent = lines.map((line, index) => {
+                const item = {
+                    original: line,
+                    content: line,
+                    isJson: false,
+                    formatted: '',
+                    timestamp: new Date(Date.now() - (lines.length - index) * 1000).getTime()
+                };
                 
-                // 添加active类
-                this.classList.add('active');
-                document.getElementById(this.dataset.tab + '-tab').classList.add('active');
+                try {
+                    const jsonObj = JSON.parse(line);
+                    item.isJson = true;
+                    item.formatted = JSON.stringify(jsonObj, null, 2);
+                    item.content = item.formatted;
+                } catch (e) {
+                    // 不是JSON，保持原样
+                    item.isJson = false;
+                    item.formatted = line;
+                    item.content = line;
+                }
+                
+                return item;
             });
-        });
-    }
-
-    // 渲染群聊列表
-    function renderGroupList() {
-        const container = document.getElementById('group-list');
-        if (!logData.群聊 || Object.keys(logData.群聊).length === 0) {
-            container.innerHTML = '<div class="empty-state">暂无群聊记录</div>';
-            return;
-        }
-
-        let html = '';
-        for (const [groupId, messages] of Object.entries(logData.群聊)) {
-            const groupAvatar = `http://p.qlogo.cn/gh/${groupId}/${groupId}/640`;
-            const lastMessage = messages[messages.length - 1];
-            const groupName = lastMessage.group_name || `群聊 ${groupId}`;
             
-            html += `
-                <div class="group-item" onclick="openGroupChat('${groupId}')">
-                    <div class="group-header">
-                        <img src="${groupAvatar}" alt="${groupName}" class="group-avatar">
-                        <div class="group-info">
-                            <div class="group-name">${groupName}</div>
-                            <div class="group-id">群号: ${groupId}</div>
+            // 渲染聊天消息
+            renderChatMessages();
+            
+        } catch (error) {
+            console.error('加载日志内容失败:', error);
+            showToast('加载日志内容失败', 'error');
+            
+            messagesContainer.innerHTML = `
+                <div class="chat-message">
+                    <div class="warning-bubble">
+                        <div class="warning-header">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>加载失败</span>
                         </div>
-                        <div class="message-count">${messages.length}</div>
+                        <div class="warning-content">无法加载日志内容，请检查网络连接</div>
                     </div>
                 </div>
             `;
         }
-        container.innerHTML = html;
     }
-
-    // 渲染私聊列表
-    function renderPrivateList() {
-        const container = document.getElementById('private-list');
-        if (!logData.私聊 || Object.keys(logData.私聊).length === 0) {
-            container.innerHTML = '<div class="empty-state">暂无私聊记录</div>';
-            return;
-        }
-
-        let html = '';
-        for (const [userId, allMessages] of Object.entries(logData.私聊)) {
-            // 过滤出有效的对话消息
-            const validMessages = allMessages.filter(message => {
-                if (message.post_type === 'message_sent') {
-                    return message.target_id == userId;
-                } else if (message.post_type === 'message') {
-                    return message.user_id == userId;
-                }
-                return false;
-            });
-
-            if (validMessages.length === 0) continue;
-
-            const userAvatar = `http://q1.qlogo.cn/g?b=qq&nk=${userId}&s=640`;
-            const lastMessage = validMessages[validMessages.length - 1];
-            
-            // 确定显示的用户名
-            let userName = '';
-            if (lastMessage.post_type === 'message_sent') {
-                // 如果是机器人发送的消息，显示接收方信息
-                userName = `用户 ${userId}`;
-            } else {
-                // 如果是对方发送的消息，显示发送方信息
-                userName = lastMessage.sender?.nickname || `用户 ${userId}`;
-            }
-            
-            html += `
-                <div class="private-item" onclick="openPrivateChat('${userId}')">
-                    <div class="private-header">
-                        <img src="${userAvatar}" alt="${userName}" class="user-avatar">
-                        <div class="user-info">
-                            <div class="user-name">${userName}</div>
-                            <div class="user-id">QQ: ${userId}</div>
-                        </div>
-                        <div class="message-count">${validMessages.length}</div>
+    
+    // 渲染聊天消息
+    function renderChatMessages() {
+        const messagesContainer = document.getElementById('messagesContainer');
+        
+        if (!currentLogContent || currentLogContent.length === 0) {
+            messagesContainer.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-file-exclamation"></i>
                     </div>
+                    <div class="empty-text">日志内容为空</div>
                 </div>
             `;
-        }
-        container.innerHTML = html;
-    }
-
-    // 渲染错误日志
-    function renderErrorList() {
-        const container = document.getElementById('error-list');
-        if (!logData.报错 || logData.报错.length === 0) {
-            container.innerHTML = '<div class="empty-state">暂无错误记录</div>';
             return;
         }
-
-        let html = '';
-        logData.报错.forEach((error, index) => {
-            html += `
-                <div class="error-item" style="padding: 10px; border-left: 3px solid #e53e3e; background: #fed7d7; margin-bottom: 8px; border-radius: 4px; word-break: break-all;">
-                    <div style="font-size: 12px; color: #718096; margin-bottom: 4px;">错误 ${index + 1}</div>
-                    <div style="color: #2d3748;">${error}</div>
-                </div>
-            `;
-        });
-        container.innerHTML = html;
-    }
-
-    // 打开群聊
-    function openGroupChat(groupId) {
-        const messages = logData.群聊[groupId];
-        const lastMessage = messages[messages.length - 1];
-        const groupName = lastMessage.group_name || `群聊 ${groupId}`;
-        const groupAvatar = `http://p.qlogo.cn/gh/${groupId}/${groupId}/640`;
-
-        document.getElementById('chat-name').textContent = groupName;
-        document.getElementById('chat-id').textContent = `群号: ${groupId}`;
-        document.getElementById('chat-avatar').src = groupAvatar;
-
-        renderMessages(messages, 'group', groupId);
-        document.getElementById('chat-container').classList.add('active');
         
-        // 确保滚动到底部
-        setTimeout(() => {
-            const container = document.getElementById('messages-container');
-            container.scrollTop = container.scrollHeight;
-        }, 100);
-    }
-
-    // 打开私聊
-    function openPrivateChat(userId) {
-        // 获取与该用户的所有相关消息
-        const allMessages = logData.私聊[userId] || [];
-        
-        // 过滤出应该显示在这个聊天页面的消息
-        const messages = allMessages.filter(message => {
-            // 如果是机器人发送的消息，target_id 应该是对方QQ
-            if (message.post_type === 'message_sent') {
-                return message.target_id == userId;
-            }
-            // 如果是对方发送的消息，user_id 应该是对方QQ
-            else if (message.post_type === 'message') {
-                return message.user_id == userId;
-            }
-            return true;
-        });
-
-        const lastMessage = messages[messages.length - 1];
-        const userName = lastMessage?.sender?.nickname || `用户 ${userId}`;
-        const userAvatar = `http://q1.qlogo.cn/g?b=qq&nk=${userId}&s=640`;
-
-        document.getElementById('chat-name').textContent = userName;
-        document.getElementById('chat-id').textContent = `QQ: ${userId}`;
-        document.getElementById('chat-avatar').src = userAvatar;
-
-        renderMessages(messages, 'private', userId);
-        document.getElementById('chat-container').classList.add('active');
-        
-        // 确保滚动到底部
-        setTimeout(() => {
-            const container = document.getElementById('messages-container');
-            container.scrollTop = container.scrollHeight;
-        }, 100);
-    }
-
-    // 渲染消息
-    function renderMessages(messages, type, id) {
-        const container = document.getElementById('messages-container');
-        let html = '';
-
-        // 按时间排序，确保最新的在底部
-        const sortedMessages = [...messages].sort((a, b) => a.time - b.time);
-
-        sortedMessages.forEach(message => {
-            let isSelf = false;
-            let avatar = '';
-            let name = '';
-
-            if (type === 'group') {
-                // 群聊消息判断
-                isSelf = message.user_id == currentQQ || message.post_type === 'message_sent';
-                avatar = isSelf ? 
-                    `http://q1.qlogo.cn/g?b=qq&nk=${currentQQ}&s=640` :
-                    `http://q1.qlogo.cn/g?b=qq&nk=${message.user_id}&s=640`;
-                name = message.sender?.nickname || `用户 ${message.user_id}`;
-            } else if (type === 'private') {
-                // 私聊消息判断 - 修复归属问题
-                if (message.post_type === 'message_sent') {
-                    // 机器人发送的消息
-                    isSelf = true;
-                    avatar = `http://q1.qlogo.cn/g?b=qq&nk=${currentQQ}&s=640`;
-                    name = '我';
-                } else {
-                    // 对方发送的消息
-                    isSelf = false;
-                    avatar = `http://q1.qlogo.cn/g?b=qq&nk=${message.user_id}&s=640`;
-                    name = message.sender?.nickname || `用户 ${message.user_id}`;
-                }
-            }
-
-            // 修复：处理各种消息类型
-            if (message.post_type === 'message' || message.post_type === 'message_sent') {
-                // 普通消息
-                html += `
-                    <div class="message ${isSelf ? 'self' : ''}" onclick="showMetadata(${JSON.stringify(message).replace(/"/g, '&quot;')})">
-                        <img src="${avatar}" alt="${name}" class="message-avatar">
-                        <div class="message-content">
-                            <div class="message-text">${renderMessageContent(message)}</div>
+        // 生成聊天消息
+        const messagesHtml = currentLogContent.map((item, index) => {
+            const escapedContent = escapeHtml(item.content);
+            const timestamp = new Date(item.timestamp).toLocaleTimeString();
+            
+            if (item.isJson) {
+                return `
+                    <div class="chat-message">
+                        <div class="message-bubble" data-index="${index}">
+                            <div class="copy-hint">长按或双击复制</div>
+                            <div class="message-content">${escapedContent}</div>
+                            <div class="message-time">${timestamp}</div>
                         </div>
                     </div>
                 `;
             } else {
-                // 事件消息 - 添加点击查看元数据功能
-                html += `
-                    <div class="event-message" onclick="showMetadata(${JSON.stringify(message).replace(/"/g, '&quot;')})">
-                        <div class="event-content">
-                            ${renderEventMessage(message)}
-                        </div>
-                    </div>
-                `;
-            }
-        });
-
-        container.innerHTML = html;
-        
-        // 修复：确保滚动到底部
-        setTimeout(() => {
-            container.scrollTop = container.scrollHeight;
-        }, 50);
-    }
-
-    // 渲染消息内容
-    function renderMessageContent(message) {
-        if (!message.message && !message.raw_message) {
-            return '未知消息';
-        }
-
-        let content = '';
-        
-        // 优先使用message数组
-        if (message.message && Array.isArray(message.message)) {
-            message.message.forEach(item => {
-                switch (item.type) {
-                    case 'text':
-                        content += item.data.text;
-                        break;
-                    case 'image':
-                        if (item.data.url) {
-                            content += `
-                                <img src="${item.data.url}" alt="图片" class="message-image" 
-                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                                     onclick="event.stopPropagation();">
-                                <div class="image-error" style="display: none;">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
-                                    </svg>
-                                    图片加载失败
-                                </div>
-                            `;
-                        } else {
-                            content += `<div class="media-placeholder">[图片]</div>`;
-                        }
-                        break;
-                    case 'record':
-                    case 'audio':
-                        const audioUrl = item.data.url || '';
-                        const fileSize = item.data.file_size || '';
-                        content += `
-                            <div class="message-audio" onclick="playAudio(this, '${audioUrl}', event)">
-                                <svg class="audio-icon" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
-                                </svg>
-                                语音
-                                <div class="audio-wave">
-                                    <div class="audio-bar" style="height: 4px;"></div>
-                                    <div class="audio-bar" style="height: 8px;"></div>
-                                    <div class="audio-bar" style="height: 6px;"></div>
-                                    <div class="audio-bar" style="height: 10px;"></div>
-                                    <div class="audio-bar" style="height: 4px;"></div>
-                                </div>
-                                ${fileSize ? `<span class="audio-duration">${formatFileSize(fileSize)}</span>` : ''}
+                return `
+                    <div class="chat-message">
+                        <div class="warning-bubble" data-index="${index}">
+                            <div class="copy-hint">长按或双击复制</div>
+                            <div class="warning-header">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span>非JSON格式数据</span>
                             </div>
-                        `;
-                        break;
-                    case 'video':
-                        if (item.data.url) {
-                            content += `<video src="${item.data.url}" controls class="message-video" onclick="event.stopPropagation();"></video>`;
-                        } else {
-                            content += `<div class="media-placeholder">[视频]</div>`;
-                        }
-                        break;
-                    case 'face':
-                        content += `[表情:${item.data.id}]`;
-                        break;
-                    case 'at':
-                        content += `@${item.data.qq}`;
-                        break;
-                    default:
-                        content += `[${item.type}消息]`;
-                }
-            });
-        } else if (message.raw_message) {
-            // 使用原始消息作为备选
-            content = message.raw_message;
-        }
-        
-        return content;
-    }
-
-    // 渲染事件消息
-    function renderEventMessage(message) {
-        const name = message.sender?.nickname || `用户 ${message.user_id}`;
-        
-        // 修复：处理未知事件类型
-        if (!message.post_type) {
-            return '未知事件';
-        }
-        
-        switch (message.post_type) {
-            case 'notice':
-                if (message.notice_type) {
-                    switch (message.notice_type) {
-                        case 'group_decrease':
-                            return `${name}(${message.user_id})退出了本群`;
-                        case 'group_increase':
-                            return `${name}(${message.user_id})加入了本群`;
-                        case 'group_ban':
-                            return `${name}(${message.user_id})被禁言`;
-                        case 'group_recall':
-                            return `${name}(${message.user_id})撤回了一条消息`;
-                        default:
-                            return `群通知: ${message.notice_type}`;
-                    }
-                }
-                return '群通知';
-            case 'request':
-                return '请求事件';
-            case 'meta_event':
-                return '元事件';
-            default:
-                // 修复：对于未知事件类型，显示基本信息
-                return `事件: ${message.post_type}`;
-        }
-    }
-
-    // 播放语音
-    function playAudio(element, audioUrl, event) {
-        event.stopPropagation();
-        
-        // 停止当前播放的音频
-        if (currentAudio) {
-            currentAudio.pause();
-            const currentElement = document.querySelector('.audio-playing');
-            if (currentElement) {
-                currentElement.classList.remove('audio-playing');
+                            <div class="warning-content">${escapedContent}</div>
+                            <div class="message-time">${timestamp}</div>
+                        </div>
+                    </div>
+                `;
             }
+        }).join('');
+        
+        messagesContainer.innerHTML = messagesHtml;
+        
+        // 滚动到底部
+        setTimeout(() => {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }, 100);
+    }
+    
+    // 复制消息内容
+    function copyMessageContent(bubble) {
+        const contentElement = bubble.querySelector('.message-content, .warning-content');
+        if (!contentElement) return;
+        
+        const textToCopy = contentElement.textContent || contentElement.innerText;
+        
+        navigator.clipboard.writeText(textToCopy)
+            .then(() => {
+                // 显示复制成功效果
+                bubble.classList.add('copied');
+                showCopyNotification();
+                
+                setTimeout(() => {
+                    bubble.classList.remove('copied');
+                }, 1000);
+            })
+            .catch(err => {
+                console.error('复制失败:', err);
+                showToast('复制失败', 'error');
+            });
+    }
+    
+    // 显示复制提示
+    function showCopyNotification() {
+        const notification = document.getElementById('copyNotification');
+        notification.classList.add('show');
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 1500);
+    }
+    
+    // 关闭日志详情（聊天界面）
+    function closeLogDetail() {
+        const chatContainer = document.getElementById('chatContainer');
+        chatContainer.classList.remove('active');
+        isChatViewActive = false;
+        currentLogFile = '';
+        currentLogContent = [];
+    }
+    
+    // 删除日志提示
+    function deleteLogPrompt(logFile) {
+        if (confirm(`确定要删除日志文件 "${logFile}" 吗？此操作不可恢复。`)) {
+            deleteLog(logFile);
         }
-
-        // 如果是同一个音频，切换播放状态
-        if (element.classList.contains('audio-playing')) {
-            element.classList.remove('audio-playing');
-            currentAudio = null;
-            return;
-        }
-
-        // 播放新音频
-        if (audioUrl) {
-            const audio = new Audio(audioUrl);
-            audio.play();
+    }
+    
+    // 删除日志
+    async function deleteLog(logFile) {
+        try {
+            const response = await fetch(`../api.php?type=log&action=del&name=${encodeURIComponent(logFile)}`);
+            const result = await response.json();
             
-            element.classList.add('audio-playing');
-            currentAudio = audio;
-
-            // 音频播放结束
-            audio.onended = function() {
-                element.classList.remove('audio-playing');
-                currentAudio = null;
-            };
-
-            // 音频播放错误
-            audio.onerror = function() {
-                element.classList.remove('audio-playing');
-                currentAudio = null;
-                alert('语音播放失败');
-            };
-        } else {
-            alert('语音文件不可用');
+            if (result === true) {
+                showToast(`已删除日志文件`, 'success');
+                
+                // 从列表中移除
+                allLogs = allLogs.filter(file => file !== logFile);
+                
+                // 重新渲染网格
+                renderLogsGrid();
+                
+                // 如果正在查看这个日志，关闭查看窗口
+                if (currentLogFile === logFile) {
+                    closeLogDetail();
+                }
+            } else {
+                showToast('删除失败', 'error');
+            }
+            
+        } catch (error) {
+            console.error('删除日志失败:', error);
+            showToast('删除失败', 'error');
         }
     }
-
-    // 格式化文件大小
-    function formatFileSize(bytes) {
-        if (!bytes) return '';
-        if (bytes < 1024) return bytes + 'B';
-        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + 'KB';
-        return (bytes / (1024 * 1024)).toFixed(1) + 'MB';
+    
+    // HTML转义
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
-
-    // 显示元数据
-    function showMetadata(message) {
-        const time = new Date(message.time * 1000).toLocaleString();
-        document.getElementById('metadata-time').textContent = `时间: ${time}`;
+    
+    // 显示元素
+    function showElement(elementId) {
+        const element = document.getElementById(elementId);
+        if (element) element.style.display = 'block';
+    }
+    
+    // 隐藏元素
+    function hideElement(elementId) {
+        const element = document.getElementById(elementId);
+        if (element) element.style.display = 'none';
+    }
+    
+    // 显示Toast消息
+    function showToast(message, type = 'info') {
+        // 创建Toast元素
+        const toast = document.createElement('div');
+        toast.className = 'copy-notification';
+        toast.textContent = message;
+        toast.id = 'tempToast';
         
-        // 显示消息预览
-        let preview = '';
-        if (message.post_type === 'message' || message.post_type === 'message_sent') {
-            preview = renderMessageContent(message);
+        // 设置颜色
+        if (type === 'success') {
+            toast.style.backgroundColor = '#4CAF50';
+        } else if (type === 'error') {
+            toast.style.backgroundColor = '#ff6b6b';
+        } else if (type === 'warning') {
+            toast.style.backgroundColor = '#ff9800';
         } else {
-            preview = renderEventMessage(message);
+            toast.style.backgroundColor = 'var(--primary-color)';
         }
-        document.getElementById('metadata-preview').innerHTML = preview;
         
-        document.getElementById('metadata-json').textContent = JSON.stringify(message, null, 2);
-        document.getElementById('metadata-modal').classList.add('active');
-    }
-
-    // 关闭聊天界面
-    function closeChat() {
-        document.getElementById('chat-container').classList.remove('active');
-    }
-
-    // 关闭元数据弹窗
-    function closeMetadata() {
-        document.getElementById('metadata-modal').classList.remove('active');
+        // 添加到页面
+        document.body.appendChild(toast);
+        
+        // 显示动画
+        setTimeout(() => {
+            toast.classList.add('show');
+        }, 10);
+        
+        // 2秒后移除
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.remove();
+                }
+            }, 300);
+        }, 2000);
     }
 </script>

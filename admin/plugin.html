@@ -1,0 +1,859 @@
+<style>
+    /* 插件管理页面样式 - 极简版本 */
+    .plugin-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        padding: 0;
+    }
+    
+    /* 顶部标题和创建按钮 */
+    .plugin-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 5px;
+        padding: 0 5px;
+    }
+    
+    .plugin-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+    
+    .create-plugin-btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 20px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+        box-shadow: 0 3px 10px rgba(var(--primary-rgb), 0.2);
+    }
+    
+    .create-plugin-btn:active {
+        transform: scale(0.98);
+        background-color: var(--primary-dark);
+    }
+    
+    /* 插件列表 - 极简行样式 */
+    .plugin-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 10px;
+    }
+    
+    .plugin-item {
+        background-color: var(--card-bg);
+        border-radius: 16px;
+        padding: 18px 20px;
+        box-shadow: 0 2px 10px var(--shadow-color);
+        border: 1px solid var(--sidebar-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .plugin-item:active {
+        background-color: rgba(var(--primary-rgb), 0.05);
+        transform: translateY(-1px);
+    }
+    
+    /* 插件名称 */
+    .plugin-name {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+    }
+    
+    .plugin-icon {
+        width: 36px;
+        height: 36px;
+        background-color: var(--primary-color);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    
+    .plugin-icon i {
+        color: white;
+        font-size: 18px;
+    }
+    
+    /* 开关样式 */
+    .plugin-switch {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .simple-switch {
+        position: relative;
+        width: 50px;
+        height: 26px;
+    }
+    
+    .simple-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .simple-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .2s;
+        border-radius: 13px;
+    }
+    
+    .simple-slider:before {
+        position: absolute;
+        content: "";
+        height: 22px;
+        width: 22px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        transition: .2s;
+        border-radius: 50%;
+    }
+    
+    input:checked + .simple-slider {
+        background-color: var(--primary-color);
+    }
+    
+    input:checked + .simple-slider:before {
+        transform: translateX(24px);
+    }
+    
+    /* 空状态提示 */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-light);
+        background-color: var(--card-bg);
+        border-radius: 16px;
+        border: 2px dashed var(--sidebar-border);
+        margin-top: 20px;
+    }
+    
+    .empty-icon {
+        font-size: 48px;
+        color: var(--primary-light);
+        margin-bottom: 15px;
+    }
+    
+    .empty-text {
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+    
+    /* 弹窗样式 */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+        backdrop-filter: blur(3px);
+    }
+    
+    .modal {
+        background-color: var(--card-bg);
+        border-radius: 20px;
+        padding: 25px;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--sidebar-border);
+        animation: modalSlideUp 0.3s ease;
+    }
+    
+    @keyframes modalSlideUp {
+        from {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .modal-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+    
+    .close-btn {
+        background: none;
+        border: none;
+        font-size: 24px;
+        color: var(--text-light);
+        cursor: pointer;
+        transition: color 0.2s ease;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .close-btn:active {
+        color: var(--primary-color);
+        background-color: rgba(var(--primary-rgb), 0.1);
+    }
+    
+    /* 插件详情 */
+    .plugin-detail {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .detail-item {
+        padding: 15px;
+        background-color: rgba(var(--primary-rgb), 0.08);
+        border-radius: 12px;
+        border-left: 4px solid var(--primary-color);
+    }
+    
+    .detail-label {
+        font-size: 14px;
+        color: var(--text-light);
+        margin-bottom: 5px;
+        font-weight: 600;
+    }
+    
+    .detail-value {
+        font-size: 16px;
+        color: var(--text-primary);
+    }
+    
+    .detail-desc {
+        white-space: pre-line;
+        line-height: 1.6;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+    
+    /* 弹窗内的开关 */
+    .modal-switch {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px;
+        background-color: rgba(var(--primary-rgb), 0.08);
+        border-radius: 12px;
+        border-left: 4px solid var(--primary-color);
+    }
+    
+    /* 创建插件表单 */
+    .create-form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+    
+    .form-label {
+        font-size: 15px;
+        color: var(--text-primary);
+        font-weight: 600;
+        margin-left: 3px;
+    }
+    
+    .form-input {
+        padding: 14px 16px;
+        border: 1px solid var(--sidebar-border);
+        border-radius: 12px;
+        background-color: var(--card-bg);
+        color: var(--text-primary);
+        font-size: 16px;
+        transition: all 0.2s ease;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+    
+    .form-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+    }
+    
+    .form-textarea {
+        padding: 14px 16px;
+        border: 1px solid var(--sidebar-border);
+        border-radius: 12px;
+        background-color: var(--card-bg);
+        color: var(--text-primary);
+        font-size: 16px;
+        resize: vertical;
+        min-height: 100px;
+        font-family: inherit;
+        transition: all 0.2s ease;
+        line-height: 1.5;
+    }
+    
+    .form-buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 10px;
+    }
+    
+    .form-btn {
+        padding: 14px 20px;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        flex: 1;
+    }
+    
+    .form-btn:active {
+        transform: scale(0.98);
+    }
+    
+    .cancel-btn {
+        background-color: rgba(var(--primary-rgb), 0.1);
+        color: var(--primary-color);
+    }
+    
+    .submit-btn {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    
+    /* 加载状态 */
+    .loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+        gap: 20px;
+    }
+    
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid var(--sidebar-border);
+        border-top-color: var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    
+    .loading-text {
+        color: var(--text-secondary);
+        font-size: 15px;
+    }
+    
+    /* 消息提示 */
+    .toast {
+        position: fixed;
+        top: 100px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: var(--primary-color);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        z-index: 1001;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        animation: toastSlideDown 0.3s ease;
+        max-width: 90%;
+        text-align: center;
+    }
+    
+    @keyframes toastSlideDown {
+        from {
+            opacity: 0;
+            transform: translateX(-50%) translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+    }
+    
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+        .plugin-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .create-plugin-btn {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .plugin-item {
+            padding: 16px;
+        }
+        
+        .modal {
+            padding: 20px;
+        }
+        
+        .form-buttons {
+            flex-direction: column;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .plugin-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+        }
+        
+        .plugin-icon i {
+            font-size: 16px;
+        }
+        
+        .plugin-name {
+            font-size: 16px;
+            gap: 10px;
+        }
+        
+        .simple-switch {
+            width: 45px;
+            height: 24px;
+        }
+        
+        .simple-slider:before {
+            height: 20px;
+            width: 20px;
+        }
+        
+        input:checked + .simple-slider:before {
+            transform: translateX(21px);
+        }
+    }
+</style>
+
+<div class="plugin-container">
+    <!-- 插件管理头部 -->
+    <div class="plugin-header">
+        <h1 class="plugin-title">插件管理</h1>
+        <button class="create-plugin-btn" id="createPluginBtn">
+            <i class="fas fa-plus-circle"></i>
+            <span>创建插件</span>
+        </button>
+    </div>
+    
+    <!-- 插件列表 -->
+    <div class="plugin-list" id="pluginsList">
+        <!-- 插件列表通过JS动态加载 -->
+        <div class="loading">
+            <div class="spinner"></div>
+            <div class="loading-text">加载插件列表...</div>
+        </div>
+    </div>
+</div>
+
+<!-- 插件详情弹窗 -->
+<div class="modal-overlay" id="pluginDetailModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 class="modal-title" id="pluginDetailTitle">插件详情</h2>
+            <button class="close-btn" id="closeDetailBtn">&times;</button>
+        </div>
+        <div class="plugin-detail" id="pluginDetailContent">
+            <!-- 详情内容通过JS动态加载 -->
+        </div>
+    </div>
+</div>
+
+<!-- 创建插件弹窗 -->
+<div class="modal-overlay" id="createPluginModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 class="modal-title">创建新插件</h2>
+            <button class="close-btn" id="closeCreateBtn">&times;</button>
+        </div>
+        <form class="create-form" id="createPluginForm">
+            <div class="form-group">
+                <label class="form-label" for="pluginName">插件名称</label>
+                <input type="text" id="pluginName" class="form-input" placeholder="插件名称" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="pluginAuthor">作者</label>
+                <input type="text" id="pluginAuthor" class="form-input" placeholder="作者名字" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="pluginVersion">版本号</label>
+                <input type="text" id="pluginVersion" class="form-input" placeholder="例如：1.0" value="1.0" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="pluginDesc">插件描述</label>
+                <textarea id="pluginDesc" class="form-textarea" placeholder="插件描述..." required></textarea>
+            </div>
+            
+            <div class="form-buttons">
+                <button type="button" class="form-btn cancel-btn" id="cancelCreateBtn">取消</button>
+                <button type="submit" class="form-btn submit-btn" id="submitCreateBtn">创建</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // 插件数据
+    let pluginsData = [];
+    
+    // DOM加载完成后执行
+    document.addEventListener('DOMContentLoaded', function() {
+        // 初始化事件监听
+        initEventListeners();
+        
+        // 加载插件列表
+        loadPlugins();
+    });
+    
+    // 初始化事件监听
+    function initEventListeners() {
+        // 创建插件按钮
+        const createBtn = document.getElementById('createPluginBtn');
+        if (createBtn) {
+            createBtn.addEventListener('click', openCreateModal);
+        }
+        
+        // 关闭详情弹窗按钮
+        const closeDetailBtn = document.getElementById('closeDetailBtn');
+        if (closeDetailBtn) {
+            closeDetailBtn.addEventListener('click', closeDetailModal);
+        }
+        
+        // 关闭创建弹窗按钮
+        const closeCreateBtn = document.getElementById('closeCreateBtn');
+        if (closeCreateBtn) {
+            closeCreateBtn.addEventListener('click', closeCreateModal);
+        }
+        
+        // 取消创建按钮
+        const cancelCreateBtn = document.getElementById('cancelCreateBtn');
+        if (cancelCreateBtn) {
+            cancelCreateBtn.addEventListener('click', closeCreateModal);
+        }
+        
+        // 创建插件表单提交
+        const createForm = document.getElementById('createPluginForm');
+        if (createForm) {
+            createForm.addEventListener('submit', handleCreatePlugin);
+        }
+        
+        // 点击遮罩层关闭弹窗
+        const modalOverlays = document.querySelectorAll('.modal-overlay');
+        modalOverlays.forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                }
+            });
+        });
+    }
+    
+    // 加载插件列表
+    async function loadPlugins() {
+        try {
+            const response = await fetch('../api.php?type=plugin&action=list');
+            const plugins = await response.json();
+            
+            pluginsData = plugins;
+            renderPluginList(plugins);
+        } catch (error) {
+            console.error('加载插件列表失败:', error);
+            showError('加载失败，点击重试');
+        }
+    }
+    
+    // 渲染插件列表
+    function renderPluginList(plugins) {
+        const container = document.getElementById('pluginsList');
+        
+        if (plugins.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <div class="empty-text">暂无插件</div>
+                    <button class="create-plugin-btn" onclick="openCreateModal()" style="width: auto; margin-top: 15px;">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>创建第一个插件</span>
+                    </button>
+                </div>
+            `;
+            return;
+        }
+        
+        let html = '';
+        
+        plugins.forEach(plugin => {
+            const isActive = plugin.status === 'true';
+            
+            html += `
+                <div class="plugin-item" onclick="showPluginDetail('${plugin.name}')">
+                    <div class="plugin-name">
+                        <div class="plugin-icon">
+                            <i class="fas fa-plug"></i>
+                        </div>
+                        <span>${plugin.name}</span>
+                    </div>
+                    
+                    <div class="plugin-switch" onclick="event.stopPropagation()">
+                        <label class="simple-switch">
+                            <input type="checkbox" ${isActive ? 'checked' : ''} 
+                                   onchange="togglePlugin('${plugin.name}', this.checked)">
+                            <span class="simple-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+    }
+    
+    // 切换插件状态
+    async function togglePlugin(pluginName, isEnabled) {
+        try {
+            const action = isEnabled ? 'true' : 'false';
+            const response = await fetch(`../api.php?type=plugin&action=${action}&name=${encodeURIComponent(pluginName)}`);
+            const result = await response.text();
+            
+            if (result === 'true') {
+                // 更新本地数据
+                const plugin = pluginsData.find(p => p.name === pluginName);
+                if (plugin) {
+                    plugin.status = isEnabled ? 'true' : 'false';
+                }
+            } else {
+                showToast('操作失败');
+                // 重新加载列表以恢复状态
+                loadPlugins();
+            }
+        } catch (error) {
+            console.error('切换插件状态失败:', error);
+            showToast('网络错误');
+            loadPlugins();
+        }
+    }
+    
+    // 显示插件详情弹窗
+    function showPluginDetail(pluginName) {
+        const plugin = pluginsData.find(p => p.name === pluginName);
+        
+        if (!plugin) return;
+        
+        // 更新标题
+        document.getElementById('pluginDetailTitle').textContent = plugin.name;
+        
+        const isActive = plugin.status === 'true';
+        
+        // 构建详情内容
+        const detailHtml = `
+            <div class="modal-switch">
+                <div>
+                    <div class="detail-label">插件状态</div>
+                    <div class="detail-value">
+                        ${isActive ? 
+                          '<span style="color: #4CAF50; font-weight: 600;">已启用</span>' : 
+                          '<span style="color: #ff4444; font-weight: 600;">已禁用</span>'}
+                    </div>
+                </div>
+                <label class="simple-switch">
+                    <input type="checkbox" ${isActive ? 'checked' : ''} 
+                           onchange="togglePlugin('${plugin.name}', this.checked)">
+                    <span class="simple-slider"></span>
+                </label>
+            </div>
+            
+            <div class="detail-item">
+                <div class="detail-label">作者</div>
+                <div class="detail-value">${plugin.author}</div>
+            </div>
+            
+            <div class="detail-item">
+                <div class="detail-label">版本</div>
+                <div class="detail-value">${plugin.version}</div>
+            </div>
+            
+            <div class="detail-item">
+                <div class="detail-label">描述</div>
+                <div class="detail-value detail-desc">${plugin.desc.replace(/\n/g, '<br>')}</div>
+            </div>
+        `;
+        
+        // 更新内容
+        document.getElementById('pluginDetailContent').innerHTML = detailHtml;
+        
+        // 显示弹窗
+        document.getElementById('pluginDetailModal').style.display = 'flex';
+    }
+    
+    // 关闭详情弹窗
+    function closeDetailModal() {
+        document.getElementById('pluginDetailModal').style.display = 'none';
+    }
+    
+    // 打开创建插件弹窗
+    function openCreateModal() {
+        document.getElementById('createPluginModal').style.display = 'flex';
+        document.getElementById('pluginName').focus();
+    }
+    
+    // 关闭创建弹窗
+    function closeCreateModal() {
+        document.getElementById('createPluginModal').style.display = 'none';
+        document.getElementById('createPluginForm').reset();
+    }
+    
+    // 处理创建插件
+    async function handleCreatePlugin(e) {
+        e.preventDefault();
+        
+        const pluginName = document.getElementById('pluginName').value.trim();
+        const pluginAuthor = document.getElementById('pluginAuthor').value.trim();
+        const pluginVersion = document.getElementById('pluginVersion').value.trim();
+        const pluginDesc = document.getElementById('pluginDesc').value.trim();
+        
+        // 验证输入
+        if (!pluginName || !pluginAuthor || !pluginVersion || !pluginDesc) {
+            showToast('请填写所有项目');
+            return;
+        }
+        
+        // 禁用提交按钮
+        const submitBtn = document.getElementById('submitCreateBtn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = '创建中...';
+        
+        try {
+            // 创建FormData对象
+            const formData = new FormData();
+            formData.append('action', 'create');
+            formData.append('name', pluginName);
+            formData.append('author', pluginAuthor);
+            formData.append('version', pluginVersion);
+            formData.append('desc', pluginDesc);
+            
+            // 发送POST请求
+            const response = await fetch('../api.php?type=plugin', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.text();
+            
+            if (result === 'true') {
+                showToast('插件创建成功');
+                closeCreateModal();
+                // 重新加载插件列表
+                loadPlugins();
+            } else {
+                showToast('创建失败');
+            }
+        } catch (error) {
+            console.error('创建插件失败:', error);
+            showToast('网络错误');
+        } finally {
+            // 恢复提交按钮
+            submitBtn.disabled = false;
+            submitBtn.textContent = '创建';
+        }
+    }
+    
+    // 显示消息提示
+    function showToast(text) {
+        // 移除已存在的toast
+        const existingToast = document.querySelector('.toast');
+        if (existingToast) {
+            existingToast.remove();
+        }
+        
+        // 创建toast元素
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = text;
+        
+        // 添加到页面
+        document.body.appendChild(toast);
+        
+        // 2秒后移除
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.remove();
+            }
+        }, 2000);
+    }
+    
+    // 显示错误
+    function showError(text) {
+        const container = document.getElementById('pluginsList');
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon" style="color: #ff4444;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="empty-text">${text}</div>
+                <button class="create-plugin-btn" onclick="loadPlugins()" style="width: auto; margin-top: 15px;">
+                    <i class="fas fa-redo"></i>
+                    <span>重新加载</span>
+                </button>
+            </div>
+        `;
+    }
+</script>

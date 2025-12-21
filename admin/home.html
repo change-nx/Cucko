@@ -1,273 +1,844 @@
 <style>
-    :root {
-        --primary-color: #667eea;
-        --secondary-color: #764ba2;
-        --accent-color: #5a67d8;
-        --text-color: #2d3748;
-        --text-light: #718096;
-        --bg-color: #f7fafc;
-        --card-bg: #ffffff;
-        --shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
-        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+    /* 仪表盘特定样式 */
+    .dashboard-container {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
     }
-
-    .content-card {
+    
+    /* 机器人信息部分 - 顶部 */
+    .bot-info {
         background-color: var(--card-bg);
-        border-radius: 12px;
-        box-shadow: var(--shadow);
+        border-radius: 16px;
         padding: 30px;
-        margin-bottom: 20px;
+        box-shadow: 0 5px 25px var(--shadow-color);
+        border: 1px solid var(--sidebar-border);
     }
-
-    .content-title {
-        font-size: 24px;
-        margin-bottom: 20px;
-        color: var(--text-color);
-        font-weight: 600;
-    }
-
-    .cards-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 20px;
-        margin-top: 20px;
-    }
-
-    .info-card {
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-        color: white;
-        border-radius: 12px;
-        padding: 25px;
-        box-shadow: var(--shadow-lg);
-        transition: transform 0.3s ease;
-    }
-
-    .info-card:hover {
-        transform: translateY(-5px);
-    }
-
-    .stats-card {
-        background: white;
-        border-radius: 12px;
-        padding: 25px;
-        box-shadow: var(--shadow);
-        border-left: 4px solid var(--primary-color);
-    }
-
-    .card-header {
+    
+    .bot-header {
         display: flex;
         align-items: center;
         margin-bottom: 20px;
     }
-
-    .card-header h3 {
-        font-size: 18px;
-        font-weight: 600;
-        margin: 0;
-    }
-
-    .avatar-section {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-
-    .avatar {
-        width: 80px;
-        height: 80px;
+    
+    .bot-avatar {
+        width: 90px;
+        height: 90px;
         border-radius: 50%;
-        border: 3px solid rgba(255, 255, 255, 0.3);
+        overflow: hidden;
+        margin-right: 25px;
+        border: 4px solid var(--primary-color);
+        flex-shrink: 0;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .bot-avatar img {
+        width: 100%;
+        height: 100%;
         object-fit: cover;
     }
-
-    .qq-info h4 {
-        font-size: 24px;
-        margin: 0 0 5px 0;
+    
+    .bot-details h3 {
+        font-size: 26px;
         font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 8px;
     }
-
-    .qq-info p {
-        margin: 0;
-        opacity: 0.9;
+    
+    .bot-status {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 16px;
+        background-color: rgba(76, 175, 80, 0.15);
+        border-radius: 25px;
         font-size: 14px;
+        color: #4CAF50;
+        font-weight: 500;
     }
-
-    .stats-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
+    
+    .status-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: #4CAF50;
+        margin-right: 8px;
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.7; transform: scale(1.1); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+    
+    .owners-section {
+        margin-top: 25px;
+        padding-top: 25px;
+        border-top: 1px solid var(--sidebar-border);
+    }
+    
+    .owners-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 18px;
+    }
+    
+    .owners-list {
+        display: flex;
+        flex-wrap: wrap;
         gap: 20px;
     }
-
-    .stat-item {
-        text-align: center;
-        padding: 15px;
-        background: var(--bg-color);
-        border-radius: 8px;
+    
+    .owner-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 85px;
+    }
+    
+    .owner-avatar {
+        width: 65px;
+        height: 65px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-bottom: 10px;
+        border: 2px solid var(--primary-light);
         transition: all 0.3s ease;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
     }
-
-    .stat-item:hover {
-        background: rgba(102, 126, 234, 0.1);
-        transform: scale(1.05);
+    
+    .owner-avatar:hover {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     }
-
-    .stat-number {
-        font-size: 32px;
-        font-weight: 700;
+    
+    .owner-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .owner-qq {
+        font-size: 13px;
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+    
+    /* 小统计卡片 - 一行3个 */
+    .small-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+    }
+    
+    .small-stat-card {
+        background-color: var(--card-bg);
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: 0 5px 20px var(--shadow-color);
+        border: 1px solid var(--sidebar-border);
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .small-stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px var(--shadow-color);
+    }
+    
+    .small-stat-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .small-stat-icon {
+        width: 55px;
+        height: 55px;
+        background-color: var(--primary-color);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        flex-shrink: 0;
+        box-shadow: 0 5px 15px rgba(var(--primary-rgb), 0.3);
+    }
+    
+    .small-stat-icon i {
+        color: white;
+        font-size: 26px;
+    }
+    
+    .small-stat-title {
+        font-size: 18px;
+        font-weight: 600;
         color: var(--primary-color);
         margin-bottom: 5px;
     }
-
-    .stat-label {
+    
+    .small-stat-subtitle {
         font-size: 14px;
-        color: var(--text-light);
+        color: var(--text-secondary);
+    }
+    
+    .small-stat-value {
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 5px;
+        flex-grow: 1;
+        line-height: 1.2;
+    }
+    
+    .small-stat-desc {
+        font-size: 15px;
+        color: var(--text-secondary);
+        line-height: 1.5;
+    }
+    
+    /* 圆形监控卡片 - 一行2个 */
+    .circular-monitor {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+    }
+    
+    .circular-card {
+        background-color: var(--card-bg);
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 5px 25px var(--shadow-color);
+        border: 1px solid var(--sidebar-border);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: all 0.3s ease;
+    }
+    
+    .circular-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 35px var(--shadow-color);
+    }
+    
+    .circular-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 25px;
+        width: 100%;
+    }
+    
+    .circular-icon {
+        width: 55px;
+        height: 55px;
+        background-color: var(--primary-color);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 18px;
+        flex-shrink: 0;
+        box-shadow: 0 5px 15px rgba(var(--primary-rgb), 0.3);
+    }
+    
+    .circular-icon i {
+        color: white;
+        font-size: 24px;
+    }
+    
+    .circular-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+    
+    /* 圆形进度条样式 - 放大 */
+    .circular-progress {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 20px 0 25px;
+        width: 100%;
+    }
+    
+    .progress-circle {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: conic-gradient(var(--primary-color) 0% 0%, var(--sidebar-border) 0% 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .progress-circle::before {
+        content: "";
+        position: absolute;
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        background-color: var(--card-bg);
+    }
+    
+    .progress-value {
+        position: relative;
+        font-size: 38px;
+        font-weight: 800;
+        color: var(--primary-color);
+        z-index: 1;
+    }
+    
+    .progress-label {
+        font-size: 18px;
+        color: var(--text-secondary);
+        text-align: center;
+        margin-bottom: 10px;
         font-weight: 500;
     }
-
-    .loading-state {
+    
+    .progress-details {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin-top: 15px;
+        font-size: 15px;
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+    
+    .progress-details span {
+        background-color: rgba(var(--primary-rgb), 0.08);
+        padding: 8px 15px;
+        border-radius: 10px;
+        flex: 1;
+        margin: 0 5px;
         text-align: center;
-        padding: 40px;
-        color: var(--text-light);
     }
-
-    .loading-spinner {
-        width: 40px;
-        height: 40px;
-        border: 4px solid #f3f3f3;
-        border-top: 4px solid var(--primary-color);
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin: 0 auto 15px;
+    
+    /* 系统信息部分 - 保持原来的样式 */
+    .system-info {
+        background-color: var(--card-bg);
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 5px 25px var(--shadow-color);
+        border: 1px solid var(--sidebar-border);
     }
-
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+    
+    .info-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 25px;
     }
-
-    .error-state {
-        text-align: center;
-        padding: 40px;
-        color: #e53e3e;
-        background: #fed7d7;
-        border-radius: 8px;
-        margin: 20px 0;
+    
+    .info-icon {
+        width: 60px;
+        height: 60px;
+        background-color: var(--primary-color);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 20px;
+        box-shadow: 0 5px 15px rgba(var(--primary-rgb), 0.3);
     }
-
-    .refresh-btn {
-        background: var(--primary-color);
+    
+    .info-icon i {
         color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 14px;
-        margin-top: 10px;
-        transition: background 0.3s;
+        font-size: 28px;
     }
-
-    .refresh-btn:hover {
-        background: var(--accent-color);
+    
+    .info-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--primary-color);
     }
-
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+    
+    .info-item {
+        padding: 20px;
+        background-color: rgba(var(--primary-rgb), 0.08);
+        border-radius: 12px;
+        border-left: 5px solid var(--primary-color);
+        transition: all 0.3s ease;
+    }
+    
+    .info-item:hover {
+        transform: translateY(-3px);
+        background-color: rgba(var(--primary-rgb), 0.12);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .info-label {
+        font-size: 15px;
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+        font-weight: 500;
+    }
+    
+    .info-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-primary);
+        line-height: 1.4;
+    }
+    
+    /* 响应式设计 */
+    @media (max-width: 1200px) {
+        .circular-progress .progress-circle {
+            width: 180px;
+            height: 180px;
+        }
+        
+        .progress-circle::before {
+            width: 140px;
+            height: 140px;
+        }
+        
+        .progress-value {
+            font-size: 34px;
+        }
+    }
+    
+    @media (max-width: 992px) {
+        .small-stats {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .circular-monitor {
+            grid-template-columns: 1fr;
+        }
+        
+        .circular-progress .progress-circle {
+            width: 200px;
+            height: 200px;
+        }
+        
+        .progress-circle::before {
+            width: 160px;
+            height: 160px;
+        }
+        
+        .progress-value {
+            font-size: 36px;
+        }
+        
+        .info-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
     @media (max-width: 768px) {
-        .cards-container {
-            grid-template-columns: 1fr;
-        }
-        
-        .stats-grid {
-            grid-template-columns: 1fr;
-        }
-        
-        .avatar-section {
+        .bot-header {
             flex-direction: column;
             text-align: center;
         }
+        
+        .bot-avatar {
+            margin-right: 0;
+            margin-bottom: 20px;
+        }
+        
+        .small-stats {
+            grid-template-columns: 1fr;
+        }
+        
+        .circular-progress .progress-circle {
+            width: 180px;
+            height: 180px;
+        }
+        
+        .progress-circle::before {
+            width: 140px;
+            height: 140px;
+        }
+        
+        .progress-value {
+            font-size: 32px;
+        }
+        
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .owners-list {
+            justify-content: center;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .bot-info,
+        .small-stat-card,
+        .circular-card,
+        .system-info {
+            padding: 20px;
+        }
+        
+        .circular-progress .progress-circle {
+            width: 160px;
+            height: 160px;
+        }
+        
+        .progress-circle::before {
+            width: 125px;
+            height: 125px;
+        }
+        
+        .progress-value {
+            font-size: 30px;
+        }
+        
+        .progress-details {
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .progress-details span {
+            margin: 0;
+        }
+        
+        .small-stat-value {
+            font-size: 32px;
+        }
+        
+        .circular-title {
+            font-size: 18px;
+        }
+        
+        .info-title {
+            font-size: 20px;
+        }
+    }
+    
+    /* 加载动画 */
+    .loading {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 400px;
+        flex-direction: column;
+    }
+    
+    .spinner {
+        width: 60px;
+        height: 60px;
+        border: 5px solid var(--sidebar-border);
+        border-top-color: var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 25px;
+    }
+    
+    .loading-text {
+        color: var(--text-secondary);
+        font-size: 18px;
+        font-weight: 500;
+    }
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
     }
 </style>
 
-<div class="content-card">
-    
-    <div id="loading" class="loading-state">
-        <div class="loading-spinner"></div>
-        <p>正在加载数据...</p>
-    </div>
-    
-    <div id="error" class="error-state" style="display: none;">
-        <p>数据加载失败，请重试</p>
-        <button class="refresh-btn" onclick="loadHomeData()">重新加载</button>
-    </div>
-    
-    <div id="content" style="display: none;">
-        <div class="cards-container">
-            <!-- QQ信息卡片 -->
-            <div class="info-card">
-                <div class="card-header">
-                    <h3>账号信息</h3>
-                </div>
-                <div class="card-body">
-                    <div class="avatar-section">
-                        <img id="qqAvatar" src="" alt="QQ头像" class="avatar">
-                        <div class="qq-info">
-                            <h4 id="qqNumber">加载中...</h4>
-                        </div>
-                    </div>
+<div class="dashboard-container">
+    <!-- 机器人信息 - 顶部 -->
+    <div class="bot-info">
+        <div class="bot-header">
+            <div class="bot-avatar">
+                <img id="botAvatar" src="" alt="机器人头像" onerror="this.src='https://q1.qlogo.cn/g?b=qq&nk=0&s=640'">
+            </div>
+            <div class="bot-details">
+                <h3 id="botQQ">QQ: 加载中...</h3>
+                <div class="bot-status">
+                    <span class="status-dot"></span>
+                    <span id="botStatusText">运行正常</span>
                 </div>
             </div>
-            
-            <!-- 统计信息卡片 -->
-            <div class="stats-card">
-                <div class="card-header">
-                    <h3>数据统计</h3>
+        </div>
+        
+        <div class="owners-section">
+            <div class="owners-title">主人列表</div>
+            <div class="owners-list" id="ownersList">
+                <!-- 主人列表将通过JS动态生成 -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- 小统计卡片 - 一行3个 -->
+    <div class="small-stats">
+        <div class="small-stat-card">
+            <div class="small-stat-header">
+                <div class="small-stat-icon">
+                    <i class="fas fa-scroll"></i>
                 </div>
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-number" id="logCount">0</div>
-                        <div class="stat-label">日志数量</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number" id="pluginCount">0</div>
-                        <div class="stat-label">插件数量</div>
-                    </div>
+                <div>
+                    <div class="small-stat-title">日志统计</div>
+                    <div class="small-stat-subtitle">今日/总日志数</div>
                 </div>
+            </div>
+            <div class="small-stat-value" id="logToday">0</div>
+            <div class="small-stat-desc">总共 <span id="logTotal">0</span> 条</div>
+        </div>
+        
+        <div class="small-stat-card">
+            <div class="small-stat-header">
+                <div class="small-stat-icon">
+                    <i class="fas fa-puzzle-piece"></i>
+                </div>
+                <div>
+                    <div class="small-stat-title">插件状态</div>
+                    <div class="small-stat-subtitle">运行中插件数量</div>
+                </div>
+            </div>
+            <div class="small-stat-value" id="pluginActive">0</div>
+            <div class="small-stat-desc">插件总共 <span id="pluginTotal">0</span> 个</div>
+        </div>
+        
+        <div class="small-stat-card">
+            <div class="small-stat-header">
+                <div class="small-stat-icon">
+                    <i class="fas fa-microchip"></i>
+                </div>
+                <div>
+                    <div class="small-stat-title">CPU核心</div>
+                    <div class="small-stat-subtitle">处理器核心数</div>
+                </div>
+            </div>
+            <div class="small-stat-value" id="cpuCores">0</div>
+            <div class="small-stat-desc">当前使用率: <span id="cpuUsage">0%</span></div>
+        </div>
+    </div>
+    
+    <!-- 圆形监控卡片 - 一行2个（内存和存储） -->
+    <div class="circular-monitor">
+        <div class="circular-card">
+            <div class="circular-header">
+                <div class="circular-icon">
+                    <i class="fas fa-memory"></i>
+                </div>
+                <div class="circular-title">内存使用</div>
+            </div>
+            <div class="circular-progress">
+                <div class="progress-circle" id="memoryCircle">
+                    <div class="progress-value" id="memoryPercent">0%</div>
+                </div>
+                <div class="progress-label">内存使用率</div>
+                <div class="progress-details">
+                    <span>已用: <span id="memoryUsed">0GB</span></span>
+                    <span>总共: <span id="memoryTotal">0GB</span></span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="circular-card">
+            <div class="circular-header">
+                <div class="circular-icon">
+                    <i class="fas fa-hdd"></i>
+                </div>
+                <div class="circular-title">存储空间</div>
+            </div>
+            <div class="circular-progress">
+                <div class="progress-circle" id="storageCircle">
+                    <div class="progress-value" id="storagePercent">0%</div>
+                </div>
+                <div class="progress-label">存储使用率</div>
+                <div class="progress-details">
+                    <span>已用: <span id="storageUsed">0GB</span></span>
+                    <span>总共: <span id="storageTotal">0GB</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 系统信息 - 保持原来的卡片样式 -->
+    <div class="system-info">
+        <div class="info-header">
+            <div class="info-icon">
+                <i class="fas fa-server"></i>
+            </div>
+            <div class="info-title">系统信息</div>
+        </div>
+        
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">操作系统</div>
+                <div class="info-value" id="systemInfo">加载中...</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">CPU信息</div>
+                <div class="info-value"><span id="cpuCount">0</span> 核心，使用率 <span id="cpuUsageDetail">0%</span></div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">内存总量</div>
+                <div class="info-value" id="memoryInfo">0GB</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">存储总量</div>
+                <div class="info-value" id="storageInfo">0GB</div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // 页面加载时获取数据
-    document.addEventListener('DOMContentLoaded', function() {
-        loadHomeData();
-    });
-
-    async function loadHomeData() {
-        // 显示加载状态
-        document.getElementById('loading').style.display = 'block';
-        document.getElementById('error').style.display = 'none';
-        document.getElementById('content').style.display = 'none';
-        
+    // 从API获取数据
+    async function fetchDashboardData() {
         try {
-            const response = await fetch('../api.php?type=home');
-            const result = await response.json();
+            const response = await fetch('../api.php?type=main');
+            const data = await response.json();
             
-            if (result) {
-                // 更新页面数据
-                document.getElementById('qqNumber').textContent = result.QQ || '未知';
-                document.getElementById('qqAvatar').src = result.image || 'default-avatar.png';
-                document.getElementById('logCount').textContent = result.log || 0;
-                document.getElementById('pluginCount').textContent = result.plugin || 0;
-                
-                // 显示内容
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('content').style.display = 'block';
-            } else {
-                throw new Error('数据格式错误');
-            }
+            // 更新页面数据
+            updateDashboard(data);
         } catch (error) {
-            console.error('加载数据失败:', error);
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('error').style.display = 'block';
+            console.error('获取仪表盘数据失败:', error);
+            showErrorMessage('无法加载仪表盘数据，请检查网络连接');
         }
     }
+    
+    // 更新仪表盘数据
+    function updateDashboard(data) {
+        // 更新机器人信息
+        document.getElementById('botQQ').textContent = `QQ: ${data.QQ}`;
+        document.getElementById('botAvatar').src = data.avatar;
+        
+        // 更新日志统计
+        document.getElementById('logToday').textContent = data.Framework.LogToday;
+        document.getElementById('logTotal').textContent = data.Framework.LogTotal;
+        
+        // 更新插件状态
+        document.getElementById('pluginActive').textContent = data.Framework.PluginTrue;
+        document.getElementById('pluginTotal').textContent = data.Framework.PluginTotal;
+        
+        // 更新CPU信息
+        const cpuPercent = parseFloat(data.Server.CPU.replace('%', ''));
+        document.getElementById('cpuUsage').textContent = data.Server.CPU;
+        document.getElementById('cpuCores').textContent = data.Server.CPUCount;
+        document.getElementById('cpuCount').textContent = data.Server.CPUCount;
+        document.getElementById('cpuUsageDetail').textContent = data.Server.CPU;
+        
+        // 更新主人列表
+        updateOwnersList(data.Owner);
+        
+        // 更新内存信息
+        const memoryUsed = parseFloat(data.Server.MemoryUsed);
+        const memoryTotal = parseFloat(data.Server.MemoryTotal);
+        const memoryPercent = (memoryUsed / memoryTotal * 100).toFixed(1);
+        
+        document.getElementById('memoryUsed').textContent = data.Server.MemoryUsed;
+        document.getElementById('memoryTotal').textContent = data.Server.MemoryTotal;
+        document.getElementById('memoryPercent').textContent = `${memoryPercent}%`;
+        document.getElementById('memoryInfo').textContent = data.Server.MemoryTotal;
+        updateCircularProgress('memoryCircle', memoryPercent, '#4a90e2');
+        
+        // 更新存储信息
+        const storageUsed = parseFloat(data.Server.StorageUsed);
+        const storageTotal = parseFloat(data.Server.StorageTotal);
+        const storagePercent = (storageUsed / storageTotal * 100).toFixed(1);
+        
+        document.getElementById('storageUsed').textContent = data.Server.StorageUsed;
+        document.getElementById('storageTotal').textContent = data.Server.StorageTotal;
+        document.getElementById('storagePercent').textContent = `${storagePercent}%`;
+        document.getElementById('storageInfo').textContent = data.Server.StorageTotal;
+        updateCircularProgress('storageCircle', storagePercent, '#4a90e2');
+        
+        // 更新系统信息
+        document.getElementById('systemInfo').textContent = data.Server.system;
+    }
+    
+    // 更新圆形进度条
+    function updateCircularProgress(elementId, percent, defaultColor) {
+        const circle = document.getElementById(elementId);
+        const normalizedPercent = Math.min(Math.max(percent, 0), 100);
+        
+        // 根据百分比设置不同颜色
+        let color = defaultColor || '#4a90e2';
+        
+        if (normalizedPercent > 85) {
+            color = '#ff4444'; // 红色 - 高使用率
+        } else if (normalizedPercent > 70) {
+            color = '#ff9800'; // 橙色 - 中等使用率
+        } else if (normalizedPercent > 50) {
+            color = '#4caf50'; // 绿色 - 正常使用率
+        }
+        
+        // 更新进度条
+        circle.style.background = `conic-gradient(${color} 0% ${normalizedPercent}%, var(--sidebar-border) ${normalizedPercent}% 100%)`;
+        
+        // 更新文本颜色
+        const progressValue = circle.querySelector('.progress-value');
+        if (progressValue) {
+            progressValue.style.color = color;
+        }
+    }
+    
+    // 更新主人列表
+    function updateOwnersList(owners) {
+        const ownersList = document.getElementById('ownersList');
+        ownersList.innerHTML = '';
+        
+        if (owners.length === 0) {
+            ownersList.innerHTML = '<div style="color: var(--text-secondary); font-size: 14px; padding: 20px; text-align: center; width: 100%;">暂无主人配置</div>';
+            return;
+        }
+        
+        owners.forEach(ownerQQ => {
+            const ownerItem = document.createElement('div');
+            ownerItem.className = 'owner-item';
+            
+            ownerItem.innerHTML = `
+                <div class="owner-avatar">
+                    <img src="http://q1.qlogo.cn/g?b=qq&nk=${ownerQQ}&s=100" 
+                         alt="主人头像" 
+                         onerror="this.src='https://q1.qlogo.cn/g?b=qq&nk=0&s=100'">
+                </div>
+                <div class="owner-qq">${ownerQQ}</div>
+            `;
+            
+            ownersList.appendChild(ownerItem);
+        });
+    }
+    
+    // 显示错误消息
+    function showErrorMessage(message) {
+        const dashboardContainer = document.querySelector('.dashboard-container');
+        dashboardContainer.innerHTML = `
+            <div class="loading">
+                <div class="spinner" style="border-top-color: #ff6b6b;"></div>
+                <div class="loading-text">${message}</div>
+                <button onclick="fetchDashboardData()" style="
+                    margin-top: 20px;
+                    padding: 12px 25px;
+                    background-color: var(--primary-color);
+                    color: white;
+                    border: none;
+                    border-radius: 10px;
+                    cursor: pointer;
+                    font-size: 16px;
+                    font-weight: 600;
+                    transition: all 0.3s ease;
+                " onmouseover="this.style.backgroundColor='var(--primary-dark)';" 
+                onmouseout="this.style.backgroundColor='var(--primary-color)';">
+                    重新加载
+                </button>
+            </div>
+        `;
+    }
+    
+    // 页面加载时获取数据
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchDashboardData();
+        
+        // 每30秒自动刷新数据
+        setInterval(fetchDashboardData, 30000);
+    });
 </script>

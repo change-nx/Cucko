@@ -1,0 +1,851 @@
+<style>
+    /* 设置页面样式 */
+    .settings-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding: 0;
+    }
+    
+    /* 标题 */
+    .settings-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 5px;
+    }
+    
+    /* 设置表单 */
+    .settings-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    /* 设置分组 */
+    .settings-group {
+        background-color: var(--card-bg);
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: 0 2px 10px var(--shadow-color);
+        border: 1px solid var(--sidebar-border);
+    }
+    
+    .group-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid rgba(var(--primary-rgb), 0.1);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .group-title i {
+        font-size: 20px;
+    }
+    
+    /* 表单字段 */
+    .form-field {
+        margin-bottom: 20px;
+    }
+    
+    .field-label {
+        display: block;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .field-label i {
+        color: var(--primary-color);
+        font-size: 16px;
+        width: 20px;
+    }
+    
+    .field-input {
+        width: 100%;
+        padding: 15px;
+        border: 1px solid var(--sidebar-border);
+        border-radius: 12px;
+        background-color: var(--card-bg);
+        color: var(--text-primary);
+        font-size: 16px;
+        transition: all 0.2s ease;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+    
+    .field-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+    }
+    
+    .field-help {
+        font-size: 13px;
+        color: var(--text-light);
+        margin-top: 6px;
+        line-height: 1.4;
+        padding-left: 28px;
+    }
+    
+    .field-help a {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+    
+    .field-help a:hover {
+        text-decoration: underline;
+    }
+    
+    /* 开关样式 */
+    .switch-field {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px 0;
+        border-bottom: 1px solid rgba(var(--primary-rgb), 0.1);
+    }
+    
+    .switch-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-primary);
+        flex: 1;
+    }
+    
+    .switch-label i {
+        color: var(--primary-color);
+        font-size: 18px;
+        width: 24px;
+    }
+    
+    .switch-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .simple-switch {
+        position: relative;
+        width: 50px;
+        height: 26px;
+    }
+    
+    .simple-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .simple-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .2s;
+        border-radius: 13px;
+    }
+    
+    .simple-slider:before {
+        position: absolute;
+        content: "";
+        height: 22px;
+        width: 22px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        transition: .2s;
+        border-radius: 50%;
+    }
+    
+    input:checked + .simple-slider {
+        background-color: var(--primary-color);
+    }
+    
+    input:checked + .simple-slider:before {
+        transform: translateX(24px);
+    }
+    
+    /* 操作按钮 */
+    .settings-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: flex-end;
+        margin-top: 10px;
+        padding: 20px 0;
+        border-top: 1px solid var(--sidebar-border);
+    }
+    
+    .action-btn {
+        padding: 14px 28px;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        min-width: 120px;
+    }
+    
+    .action-btn:active {
+        transform: scale(0.98);
+    }
+    
+    .reset-btn {
+        background-color: rgba(var(--primary-rgb), 0.1);
+        color: var(--primary-color);
+    }
+    
+    .submit-btn {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    
+    .submit-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
+    /* 保存成功提示 */
+    .save-success {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        background-color: #4CAF50;
+        color: white;
+        padding: 15px 25px;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        z-index: 1001;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        animation: slideInRight 0.3s ease, fadeOut 0.3s 2.7s;
+        max-width: 300px;
+    }
+    
+    .save-error {
+        background-color: #f44336;
+    }
+    
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+    
+    /* 加载状态 */
+    .loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+        gap: 20px;
+    }
+    
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid var(--sidebar-border);
+        border-top-color: var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    
+    .loading-text {
+        color: var(--text-secondary);
+        font-size: 15px;
+    }
+    
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+        .settings-group {
+            padding: 20px;
+        }
+        
+        .settings-actions {
+            flex-direction: column;
+        }
+        
+        .action-btn {
+            width: 100%;
+            min-width: auto;
+        }
+        
+        .save-success {
+            left: 15px;
+            right: 15px;
+            top: 80px;
+            max-width: none;
+            text-align: center;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .settings-title {
+            font-size: 22px;
+        }
+        
+        .settings-group {
+            padding: 18px;
+        }
+        
+        .group-title {
+            font-size: 17px;
+            margin-bottom: 18px;
+        }
+        
+        .field-input {
+            padding: 14px;
+            font-size: 15px;
+        }
+        
+        .switch-label {
+            font-size: 15px;
+        }
+        
+        .simple-switch {
+            width: 45px;
+            height: 24px;
+        }
+        
+        .simple-slider:before {
+            height: 20px;
+            width: 20px;
+        }
+        
+        input:checked + .simple-slider:before {
+            transform: translateX(21px);
+        }
+        
+        .action-btn {
+            padding: 14px;
+            font-size: 15px;
+        }
+    }
+</style>
+
+<div class="settings-container">
+    <h1 class="settings-title">系统设置</h1>
+    
+    <form class="settings-form" id="settingsForm">
+        <!-- Webhook 设置 -->
+        <div class="settings-group">
+            <div class="group-title">
+                <i class="fas fa-link"></i>
+                <span>Webhook 设置</span>
+            </div>
+            
+            <div class="form-field">
+                <label class="field-label">
+                    <i class="fas fa-globe"></i>
+                    <span>Webhook URL</span>
+                </label>
+                <input type="text" 
+                       class="field-input" 
+                       id="url"
+                       name="url"
+                       placeholder="例如：http://127.0.0.1:3000"
+                       required>
+                <div class="field-help">
+                    Webhook 回调地址，用于接收消息事件
+                </div>
+            </div>
+            
+            <div class="form-field">
+                <label class="field-label">
+                    <i class="fas fa-key"></i>
+                    <span>URL Token</span>
+                </label>
+                <input type="text" 
+                       class="field-input" 
+                       id="url_token"
+                       name="url_token"
+                       placeholder="Webhook 连接令牌"
+                       required>
+                <div class="field-help">
+                    Webhook 连接认证令牌
+                </div>
+            </div>
+        </div>
+        
+        <!-- HTTP 设置 -->
+        <div class="settings-group">
+            <div class="group-title">
+                <i class="fas fa-server"></i>
+                <span>消息上报设置</span>
+            </div>
+            
+            <div class="form-field">
+                <label class="field-label">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>消息上报认证令牌</span>
+                </label>
+                <input type="text" 
+                       class="field-input" 
+                       id="http_token"
+                       name="http_token"
+                       placeholder="消息上报认证令牌"
+                       required>
+                <div class="field-help">
+                    HTTP 消息上报时的认证令牌
+                </div>
+            </div>
+        </div>
+        
+        <!-- 机器人设置 -->
+        <div class="settings-group">
+            <div class="group-title">
+                <i class="fas fa-robot"></i>
+                <span>机器人设置</span>
+            </div>
+            
+            <div class="form-field">
+                <label class="field-label">
+                    <i class="fas fa-user"></i>
+                    <span>登录QQ号</span>
+                </label>
+                <input type="number" 
+                       class="field-input" 
+                       id="loginQQ"
+                       name="loginQQ"
+                       placeholder="机器人的QQ号"
+                       required>
+                <div class="field-help">
+                    机器人登录的QQ账号
+                </div>
+            </div>
+            
+            <div class="switch-field">
+                <label class="switch-label">
+                    <i class="fas fa-bolt"></i>
+                    <span>自触功能</span>
+                </label>
+                <div class="switch-container">
+                    <label class="simple-switch">
+                        <input type="checkbox" id="zc" name="zc" value="true">
+                        <span class="simple-slider"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="field-help" style="margin-top: 5px; padding-left: 28px;">
+                开启后机器人可以自动触发某些功能
+            </div>
+        </div>
+        
+        <!-- 管理员设置 -->
+        <div class="settings-group">
+            <div class="group-title">
+                <i class="fas fa-user-shield"></i>
+                <span>管理员设置</span>
+            </div>
+            
+            <div class="form-field">
+                <label class="field-label">
+                    <i class="fas fa-lock"></i>
+                    <span>管理密钥</span>
+                </label>
+                <input type="password" 
+                       class="field-input" 
+                       id="admin"
+                       name="admin"
+                       placeholder="后台管理登录密钥"
+                       required>
+                <div class="field-help">
+                    用于登录后台管理的密钥，请妥善保管
+                </div>
+            </div>
+        </div>
+        
+        <!-- 操作按钮 -->
+        <div class="settings-actions">
+            <button type="button" class="action-btn reset-btn" id="resetBtn">
+                重置
+            </button>
+            <button type="submit" class="action-btn submit-btn" id="submitBtn">
+                保存设置
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // 当前设置数据
+    let currentSettings = {};
+    let originalSettings = {};
+    
+    // DOM加载完成后执行
+    document.addEventListener('DOMContentLoaded', function() {
+        // 初始化事件监听
+        initEventListeners();
+        
+        // 加载当前设置
+        loadSettings();
+    });
+    
+    // 初始化事件监听
+    function initEventListeners() {
+        // 表单提交
+        const settingsForm = document.getElementById('settingsForm');
+        if (settingsForm) {
+            settingsForm.addEventListener('submit', handleSaveSettings);
+        }
+        
+        // 重置按钮
+        const resetBtn = document.getElementById('resetBtn');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', resetToOriginal);
+        }
+    }
+    
+    // 加载当前设置
+    async function loadSettings() {
+        try {
+            // 显示加载状态
+            showLoading();
+            
+            // 从API获取当前设置 - 使用 type=getinfo
+            const response = await fetch('../api.php?type=getinfo');
+            const settings = await response.json();
+            
+            currentSettings = settings;
+            originalSettings = {...settings};
+            
+            // 填充表单
+            populateForm(settings);
+            
+            // 隐藏加载状态
+            hideLoading();
+        } catch (error) {
+            hideLoading();
+        }
+    }
+    
+    // 填充表单
+    function populateForm(settings) {
+        // Webhook 设置
+        document.getElementById('url').value = settings.url || '';
+        document.getElementById('url_token').value = settings.url_token || '';
+        
+        // HTTP 设置
+        document.getElementById('http_token').value = settings.http_token || '';
+        
+        // 机器人设置
+        document.getElementById('loginQQ').value = settings['登录账号'] || '';
+        document.getElementById('zc').checked = settings['自触'] === true || settings['自触'] === 'true';
+        
+        // 管理员设置
+        document.getElementById('admin').value = settings.admin || '';
+    }
+    
+    // 显示加载状态
+    function showLoading() {
+        const form = document.getElementById('settingsForm');
+        const loadingHtml = `
+            <div class="loading">
+                <div class="spinner"></div>
+                <div class="loading-text">正在加载设置...</div>
+            </div>
+        `;
+        form.innerHTML = loadingHtml;
+    }
+    
+    // 隐藏加载状态
+    function hideLoading() {
+        const form = document.getElementById('settingsForm');
+        form.innerHTML = getFormHtml();
+        
+        // 重新填充表单数据
+        populateForm(currentSettings);
+        
+        // 重新绑定事件
+        initEventListeners();
+    }
+    
+    // 获取表单HTML（动态生成以避免重复）
+    function getFormHtml() {
+        return `
+            <!-- Webhook 设置 -->
+            <div class="settings-group">
+                <div class="group-title">
+                    <i class="fas fa-link"></i>
+                    <span>Webhook 设置</span>
+                </div>
+                
+                <div class="form-field">
+                    <label class="field-label">
+                        <i class="fas fa-globe"></i>
+                        <span>Webhook URL</span>
+                    </label>
+                    <input type="text" 
+                           class="field-input" 
+                           id="url"
+                           name="url"
+                           placeholder="例如：http://127.0.0.1:3000"
+                           required>
+                    <div class="field-help">
+                        Webhook 回调地址，用于接收消息事件
+                    </div>
+                </div>
+                
+                <div class="form-field">
+                    <label class="field-label">
+                        <i class="fas fa-key"></i>
+                        <span>URL Token</span>
+                    </label>
+                    <input type="text" 
+                           class="field-input" 
+                           id="url_token"
+                           name="url_token"
+                           placeholder="Webhook 连接令牌"
+                           required>
+                    <div class="field-help">
+                        Webhook 连接认证令牌
+                    </div>
+                </div>
+            </div>
+            
+            <!-- HTTP 设置 -->
+            <div class="settings-group">
+                <div class="group-title">
+                    <i class="fas fa-server"></i>
+                    <span>消息上报设置</span>
+                </div>
+                
+                <div class="form-field">
+                    <label class="field-label">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>消息上报认证令牌</span>
+                    </label>
+                    <input type="text" 
+                           class="field-input" 
+                           id="http_token"
+                           name="http_token"
+                           placeholder="消息上报认证令牌"
+                           required>
+                    <div class="field-help">
+                        HTTP 消息上报时的认证令牌
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 机器人设置 -->
+            <div class="settings-group">
+                <div class="group-title">
+                    <i class="fas fa-robot"></i>
+                    <span>机器人设置</span>
+                </div>
+                
+                <div class="form-field">
+                    <label class="field-label">
+                        <i class="fas fa-user"></i>
+                        <span>登录QQ号</span>
+                    </label>
+                    <input type="number" 
+                           class="field-input" 
+                           id="loginQQ"
+                           name="loginQQ"
+                           placeholder="机器人的QQ号"
+                           required>
+                    <div class="field-help">
+                        机器人登录的QQ账号
+                    </div>
+                </div>
+                
+                <div class="switch-field">
+                    <label class="switch-label">
+                        <i class="fas fa-bolt"></i>
+                        <span>自触功能</span>
+                    </label>
+                    <div class="switch-container">
+                        <label class="simple-switch">
+                            <input type="checkbox" id="zc" name="zc" value="true">
+                            <span class="simple-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="field-help" style="margin-top: 5px; padding-left: 28px;">
+                    开启后机器人可以自动触发某些功能
+                </div>
+            </div>
+            
+            <!-- 管理员设置 -->
+            <div class="settings-group">
+                <div class="group-title">
+                    <i class="fas fa-user-shield"></i>
+                    <span>管理员设置</span>
+                </div>
+                
+                <div class="form-field">
+                    <label class="field-label">
+                        <i class="fas fa-lock"></i>
+                        <span>管理密钥</span>
+                    </label>
+                    <input type="password" 
+                           class="field-input" 
+                           id="admin"
+                           name="admin"
+                           placeholder="后台管理登录密钥"
+                           required>
+                    <div class="field-help">
+                        用于登录后台管理的密钥，请妥善保管
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 操作按钮 -->
+            <div class="settings-actions">
+                <button type="button" class="action-btn reset-btn" id="resetBtn">
+                    重置
+                </button>
+                <button type="submit" class="action-btn submit-btn" id="submitBtn">
+                    保存设置
+                </button>
+            </div>
+        `;
+    }
+    
+    // 处理保存设置
+    async function handleSaveSettings(e) {
+        e.preventDefault();
+        
+        // 收集表单数据
+        const formData = {
+            url: document.getElementById('url').value.trim(),
+            url_token: document.getElementById('url_token').value.trim(),
+            http_token: document.getElementById('http_token').value.trim(),
+            loginQQ: document.getElementById('loginQQ').value.trim(),
+            zc: document.getElementById('zc').checked ? 'true' : 'false',
+            admin: document.getElementById('admin').value.trim()
+        };
+        
+        // 验证必填项
+        if (!formData.url || !formData.url_token || !formData.http_token || !formData.loginQQ || !formData.admin) {
+            showMessage('请填写所有必填项', 'error');
+            return;
+        }
+        
+        // 验证URL格式
+        if (!formData.url.startsWith('http://') && !formData.url.startsWith('https://')) {
+            showMessage('URL必须以 http:// 或 https:// 开头', 'error');
+            return;
+        }
+        
+        // 验证QQ号格式
+        if (formData.loginQQ.length < 5 || formData.loginQQ.length > 12) {
+            showMessage('QQ号格式不正确', 'error');
+            return;
+        }
+        
+        // 禁用提交按钮
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = '保存中...';
+        
+        try {
+            // 构建请求参数
+            const params = new URLSearchParams();
+            params.append('type', 'info');  // 保存时使用 type=info
+            params.append('url', formData.url);
+            params.append('url_token', formData.url_token);
+            params.append('http_token', formData.http_token);
+            params.append('loginQQ', formData.loginQQ);
+            params.append('zc', formData.zc);
+            params.append('admin', formData.admin);
+            
+            // 发送POST请求
+            const response = await fetch('../api.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: params.toString()
+            });
+            
+            const result = await response.text();
+            
+            if (result.includes('true') || response.ok) {
+                // 更新当前设置
+                currentSettings = {
+                    ...currentSettings,
+                    url: formData.url,
+                    url_token: formData.url_token,
+                    http_token: formData.http_token,
+                    '登录账号': formData.loginQQ,
+                    '自触': formData.zc === 'true',
+                    admin: formData.admin
+                };
+                
+                // 更新原始设置
+                originalSettings = {...currentSettings};
+                
+                showMessage('设置保存成功', 'success');
+            } else {
+                showMessage('保存失败，请重试', 'error');
+            }
+        } catch (error) {
+            console.error('保存设置失败:', error);
+            showMessage('网络错误，请重试', 'error');
+        } finally {
+            // 恢复提交按钮
+            submitBtn.disabled = false;
+            submitBtn.textContent = '保存设置';
+        }
+    }
+    
+    // 重置为原始设置
+    function resetToOriginal() {
+        if (confirm('确定要重置为原始设置吗？当前修改将丢失。')) {
+            populateForm(originalSettings);
+            showMessage('已重置为原始设置', 'success');
+        }
+    }
+    
+    // 显示消息
+    function showMessage(text, type) {
+        // 移除已存在的消息
+        const existingMsg = document.querySelector('.save-success, .save-error');
+        if (existingMsg) {
+            existingMsg.remove();
+        }
+        
+        // 创建消息元素
+        const messageDiv = document.createElement('div');
+        messageDiv.className = type === 'success' ? 'save-success' : 'save-error';
+        messageDiv.textContent = text;
+        
+        // 添加到页面
+        document.body.appendChild(messageDiv);
+        
+        // 3秒后移除
+        setTimeout(() => {
+            if (messageDiv.parentNode) {
+                messageDiv.remove();
+            }
+        }, 3000);
+    }
+</script>
