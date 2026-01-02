@@ -15,4 +15,4 @@
 - PHP7.4
 
 ## 文档
-[点击前往](https://docs.qq.com/aio/DSVFvT0piY25sSEVv)
+[点击前往](http://link3.cc/couest)
