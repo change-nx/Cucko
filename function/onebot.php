@@ -1,14 +1,12 @@
 <?php
-require("function/proto_en.php");
-require("function/proto_de.php");
 
-$http_url = info["url"];
-$token = info["url_token"];
+$api = config["api"];
+$token = config["api_token"];
 
 function BOTAPI($url,$json) {
-global $http_url;
+global $api;
 global $token;
-$url = $http_url . $url;
+$url = $api . $url;
 $header = [
     'Content-Type: application/json',
     'Authorization: Bearer ' . $token
@@ -161,6 +159,38 @@ $json = [
     return BOTAPI("/send_private_msg",$json);
 }
 
+
+function CQ_message($raw) {
+$re = preg_replace("/\[CQ:image[^\]]*\]/","[图片]",$raw);
+$re = preg_replace("/\[CQ:at[^\]]*\]/","[艾特]",$re);
+$re = preg_replace("/\[CQ:face[^\]]*\]/","[表情]",$re);
+$re = preg_replace("/\[CQ:record[^\]]*\]/","[语音]",$re);
+$re = preg_replace("/\[CQ:video[^\]]*\]/","[视频]",$re);
+$re = preg_replace("/\[CQ:json[^\]]*\]/","[卡片]",$re);
+$re = preg_replace("/\[CQ:reply[^\]]*\]/","[回复]",$re);
+$re = preg_replace("/\[CQ:file[^\]]*\]/","[文件]",$re);
+$re = preg_replace("/\[CQ:markdown[^\]]*\]/","[markdown]",$re);
+$rejson = [
+    '&amp;' => '&',
+    '&#91;' => '[',
+    '&#93;' => ']',
+    '&#44;' => ','
+];
+return str_replace(array_keys($rejson),array_values($rejson),$re);
+}
+
+function owner($QQ) {
+    if (in_array($QQ,config["owner"])) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function owner_list() {
+    return config["owner"];
+}
+
 function 点赞($QQ,$times) {
 $json = [
     "user_id" => $QQ,
@@ -184,7 +214,7 @@ $json = json_encode($json);
 return BOTAPI("/delete_friend",$json);
 }
 
-function 获取陌生人信息($QQ) {
+function 陌生人信息($QQ) {
 $json = [
     "user_id" => $QQ
 ];
@@ -214,6 +244,16 @@ $json = [
 ];
 $json = json_encode($json);
 $r = BOTAPI("/get_group_info",$json);
+$json = json_decode($r,true);
+return json_encode($json["data"],480);
+}
+
+function 群详细信息($QQ) {
+$json = [
+    "group_id" => $QQ
+];
+$json = json_encode($json);
+$r = BOTAPI("/get_group_detail_info",$json);
 $json = json_decode($r,true);
 return json_encode($json["data"],480);
 }
@@ -485,19 +525,6 @@ function 头像($QQ) {
 return "http://q1.qlogo.cn/g?b=qq&nk={$QQ}&s=640";
 }
 
-function owner($QQ) {
-    $owner = require("owner.php");
-    if (in_array($QQ,$owner)) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-function owner_list() {
-    $owner = require("owner.php");
-    return json_encode($owner,480);
-}
 
 function 群打卡($group) {
 $json = [
@@ -568,4 +595,17 @@ $json = json_encode($json);
 $r = BOTAPI("/get_group_msg_history",$json);
 $json = json_decode($r,true);
 return json_encode($json["data"]["messages"],480);
+}
+
+function 点击按钮($appid,$group,$button,$button_id=1) {
+$json = [
+    "group_id" => $group,
+    "bot_appid" => $appid,
+    "button_id" => $button,
+    "callback_data" => $button,
+    "msg_seq" => rand(1,50)
+];
+$json = json_encode($json);
+$r = BOTAPI("/click_inline_keyboard_button",$json);
+return $r;
 }

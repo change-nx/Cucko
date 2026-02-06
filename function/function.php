@@ -1,34 +1,14 @@
 <?php
-include(__DIR__."/function/qrcode.php");
 
-function wlog($content) {
+function wlog($name,$content) {
     $date = date('Y-m-d H:i:s');
-    $logDir = "log/";
+    $logDir = dirname(__DIR__,1)."/log/{$name}";
     $logFile = $logDir . '/' . date('Y-m-d') . '.log';
     if (!is_dir($logDir)) {
         mkdir($logDir, 0777, true);
     }
     $logContent = "{$content}" . PHP_EOL;
     file_put_contents($logFile, $logContent, FILE_APPEND | LOCK_EX);
-}
-
-function CQ_message($raw) {
-$re = preg_replace("/\[CQ:image[^\]]*\]/","[图片]",$raw);
-$re = preg_replace("/\[CQ:at[^\]]*\]/","[艾特]",$re);
-$re = preg_replace("/\[CQ:face[^\]]*\]/","[表情]",$re);
-$re = preg_replace("/\[CQ:record[^\]]*\]/","[语音]",$re);
-$re = preg_replace("/\[CQ:video[^\]]*\]/","[视频]",$re);
-$re = preg_replace("/\[CQ:json[^\]]*\]/","[卡片]",$re);
-$re = preg_replace("/\[CQ:reply[^\]]*\]/","[回复]",$re);
-$re = preg_replace("/\[CQ:file[^\]]*\]/","[文件]",$re);
-$re = preg_replace("/\[CQ:markdown[^\]]*\]/","[markdown]",$re);
-$rejson = [
-    '&amp;' => '&',
-    '&#91;' => '[',
-    '&#93;' => ']',
-    '&#44;' => ','
-];
-return str_replace(array_keys($rejson),array_values($rejson),$re);
 }
 
 function curl($url, $method, $headers, $params){
@@ -145,51 +125,4 @@ function 读($文件, $键, $默认值 = null) {
         flock($fp, LOCK_UN); 
         fclose($fp);
     }
-}
-
-function 二维码($content){
-ob_start();
-Toplib_Lib_QRcode::png($content, false, QR_ECLEVEL_L, 7, 1, false, [255,255,255], [0,0,0]);
-return base64_encode(ob_get_clean());
-}
-
-function load($dir) {
-    $All = glob($dir . "/*.php");
-    foreach($All as $name) {
-        try {
-            require_once($name);
-        } catch (Throwable $e) {
-            wlog("插件加载失败: ".$name." 错误: ".$e->getMessage()." 行数: ".$e->getLine());
-            continue;
-        }
-    }
-}
-
-function prop($filePath, $key) {
-    if (!file_exists($filePath)) {
-        return null;
-    }
-    $lines = file($filePath, FILE_IGNORE_NEW_LINES);
-    if ($lines === false) {
-        return null;
-    }
-    foreach ($lines as $line) {
-        $line = trim($line);
-        
-        if (empty($line)) {
-            continue;
-        }
-        
-        if ($line[0] === '#' || (strlen($line) >= 2 && substr($line, 0, 2) === '//')) {
-            continue;
-        }
-        $pos = strpos($line, '=');
-        if ($pos !== false) {
-            $currentKey = trim(substr($line, 0, $pos));
-            if ($currentKey === $key) {
-                return trim(substr($line, $pos + 1));
-            }
-        }
-    }
-    return null;
 }
