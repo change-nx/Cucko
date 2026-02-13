@@ -47,13 +47,9 @@ function 文字($content) {
         break;
      case "加群":
      case "退群":
+     case "互动":
         $json["event_id"] = 事件ID;
         return BOTAPI("/v2/groups/".来源."/messages","POST",json_encode($json));
-        break;
-     case "文字子频道":
-        unset($json["msg_type"], $json["msg_seq"]);
-        $json["msg_id"] = 消息ID;
-        return BOTAPI("/channels/".来源."/messages","POST",json_encode($json));
         break;
    }
 }
@@ -80,6 +76,7 @@ function 富媒体($type,$image) {
            case "加群":
            case "退群":
            case "群聊":
+           case "互动":
                return json_decode(BOTAPI("/v2/groups/".来源."/files", "POST",$json),true);
                break;
            case "私聊":
@@ -120,17 +117,10 @@ function 图片($image,$content=null) {
         break;
      case "加群":
      case "退群":
+     case "互动":
         $json["event_id"] = 事件ID;
         return BOTAPI("/v2/groups/".来源."/messages","POST",json_encode($json));
         break;
-     case "文字子频道":
-        $json = [
-             "content" => $content,
-             "file_image" => $image,
-             "msg_id" => 消息ID
-         ];
-         return BOTAPI("/channels/".来源."/messages","POST",json_encode($json));
-         break;
    }
 }
 
@@ -169,6 +159,7 @@ function 语音($yy) {
         break;
      case "加群":
      case "退群":
+     case "互动":
         $json["event_id"] = 事件ID;
         return BOTAPI("/v2/groups/".来源."/messages","POST",json_encode($json));
         break;
@@ -201,6 +192,7 @@ function 视频($video) {
         break;
      case "加群":
      case "退群":
+     case "互动":
         $json["event_id"] = 事件ID;
         return BOTAPI("/v2/groups/".来源."/messages","POST",json_encode($json));
         break;
@@ -228,6 +220,7 @@ function 按钮($key) {
         break;
      case "加群":
      case "退群":
+     case "互动":
         $json["event_id"] = 事件ID;
         return BOTAPI("/v2/groups/".来源."/messages","POST",json_encode($json));
         break;
@@ -284,6 +277,7 @@ function 文卡(...$items) {
          break;
          case "加群":
          case "退群":
+         case "互动":
            $json["event_id"] = 事件ID;
            return BOTAPI("/v2/groups/".来源."/messages", "POST", json_encode($json));
          break;
@@ -316,6 +310,7 @@ function 大图($title,$xtitle,$iurl){
          break;
          case "加群":
          case "退群":
+         case "互动":
            $json["event_id"] = 事件ID;
            return BOTAPI("/v2/groups/".来源."/messages", "POST", json_encode($json));
          break;
@@ -351,6 +346,7 @@ function 跳转卡($title,$desc,$image,$tz){
          break;
          case "加群":
          case "退群":
+         case "互动":
            $json["event_id"] = 事件ID;
            return BOTAPI("/v2/groups/".来源."/messages", "POST", json_encode($json));
          break;
@@ -392,11 +388,11 @@ function 撤回($id){
    return BOTAPI("/v2/{$type}/".来源."/messages/".$id,"DELETE","");
 }
 
-function MD($id,$md,$keyboard = null) {
+function MD($id, $md, $keyboard = null) {
    $json = [
        "content" => "",
        "msg_type" => 2,
-       "msg_seq" => rand(1,9999),
+       "msg_seq" => rand(1, 9999),
        "markdown" => [
            "custom_template_id" => $id,
            "params" => [],
@@ -406,26 +402,40 @@ function MD($id,$md,$keyboard = null) {
        ]
    ];
    
+   $params = [];
    foreach ($md as $name => $value) {
+       if (!isset($params[$name])) {
+           $params[$name] = [];
+       }
+       
+       if (is_array($value)) {
+           $params[$name] = array_merge($params[$name], $value);
+       } else {
+           $params[$name][] = $value;
+       }
+   }
+   
+   foreach ($params as $key => $values) {
        $json["markdown"]["params"][] = [
-           "key" => $name,
-           "values" => [$value]
+           "key" => $key,
+           "values" => $values
        ];
    }
    
    switch (消息来源) {
      case "群聊":
         $json["msg_id"] = 消息ID;
-        return BOTAPI("/v2/groups/".来源."/messages","POST",json_encode($json));
+        return BOTAPI("/v2/groups/".来源."/messages", "POST", json_encode($json));
         break;
      case "私聊":
         $json["msg_id"] = 消息ID;
-        return BOTAPI("/v2/users/".来源."/messages","POST",json_encode($json));
+        return BOTAPI("/v2/users/".来源."/messages", "POST", json_encode($json));
         break;
      case "加群":
      case "退群":
+     case "互动":
         $json["event_id"] = 事件ID;
-        return BOTAPI("/v2/groups/".来源."/messages","POST",json_encode($json));
+        return BOTAPI("/v2/groups/".来源."/messages", "POST", json_encode($json));
         break;
    }
 }

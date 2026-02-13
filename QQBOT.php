@@ -119,7 +119,7 @@ switch($event) {
         
     case "INTERACTION_CREATE":
         define("消息来源", "互动");
-        define("事件ID", $raw["d"]["id"]);
+        define("事件ID", $raw["id"]);
         define("来源", $raw["d"]["group_openid"]);
         break;
 }

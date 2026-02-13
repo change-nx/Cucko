@@ -1,4 +1,6 @@
 <?php
+require(__DIR__."/other/proto_en.php");
+require(__DIR__."/other/proto_de.php");
 
 $api = config["api"];
 $token = config["api_token"];
@@ -453,8 +455,7 @@ return BOTAPI("/upload_group_file",$json);
 function 取消息($raw,$type) {
 $image = [];
 $QQ = [];
-$json = json_decode($raw,true);
-$message = $json["message"];
+$message = $raw["message"];
     foreach ($message as $value) {
         $t = $value["type"];
         if ($type==$t&&$type=="reply") {
@@ -601,7 +602,7 @@ function 点击按钮($appid,$group,$button,$button_id=1) {
 $json = [
     "group_id" => $group,
     "bot_appid" => $appid,
-    "button_id" => $button,
+    "button_id" => $button_id,
     "callback_data" => $button,
     "msg_seq" => rand(1,50)
 ];

@@ -81,49 +81,49 @@ switch ($post_type) {
         switch ($other_type) {
              case "group_increase":
                  define("消息来源","群聊-入群");
-                 define("QQ",$data["user_id"]);
-                 define("群号",$data["group_id"]);
+                 define("QQ",raw["user_id"]);
+                 define("群号",raw["group_id"]);
              break;
              case "group_decrease":
                  define("消息来源","群聊-退群");
-                 define("QQ",$data["user_id"]);
-                 define("群号",$data["group_id"]);
+                 define("QQ",raw["user_id"]);
+                 define("群号",raw["group_id"]);
              break;
              case "group_recall":
                  define("消息来源","群聊-消息撤回");
-                 define("QQ",$data["user_id"]);
-                 define("群号",$data["group_id"]);
-                 define("消息ID",$data["message_id"]);
+                 define("QQ",raw["user_id"]);
+                 define("群号",raw["group_id"]);
+                 define("消息ID",raw["message_id"]);
              break;
              case "friend_recall":
                  define("消息来源","私聊-消息撤回");
-                 define("QQ",$data["user_id"]);
-                 define("消息ID",$data["message_id"]);
+                 define("QQ",raw["user_id"]);
+                 define("消息ID",raw["message_id"]);
              break;
              case "group_ban":
                  if ($sub_type == "ban") {
                      define("消息来源","群聊-群成员禁言");
-                     define("QQ",$data["user_id"]);
-                     define("群号",$data["group_id"]);
-                     define("操作者",$data["operator_id"]);
-                     define("禁言时长",$data["duration"]);
+                     define("QQ",raw["user_id"]);
+                     define("群号",raw["group_id"]);
+                     define("操作者",raw["operator_id"]);
+                     define("禁言时长",raw["duration"]);
                  } elseif ($sub_type == "lift_ban") {
                      define("消息来源","群聊-群成员解禁");
-                     define("QQ",$data["user_id"]);
-                     define("群号",$data["group_id"]);
-                     define("操作者",$data["operator_id"]);
+                     define("QQ",raw["user_id"]);
+                     define("群号",raw["group_id"]);
+                     define("操作者",raw["operator_id"]);
                  }
              break;
              case "group_admin":
-                 $sub_type = $data["sub_type"];
+                 $sub_type = raw["sub_type"];
                  if ($sub_type == "set") {
                      define("消息来源","群聊-管理员添加");
-                     define("QQ",$data["user_id"]);
-                     define("群号",$data["group_id"]);
+                     define("QQ",raw["user_id"]);
+                     define("群号",raw["group_id"]);
                  } elseif ($sub_type == "unset") {
                      define("消息来源","群聊-管理员减少");
-                     define("QQ",$data["user_id"]);
-                     define("群号",$data["group_id"]);
+                     define("QQ",raw["user_id"]);
+                     define("群号",raw["group_id"]);
                  }
              break;
         }
@@ -140,9 +140,9 @@ switch ($post_type) {
             switch ($sub_type) {
                 case "add":
                      define("消息来源","群聊-申请入群");
-                     define("QQ",$data["user_id"]);
-                     define("群号",$data["group_id"]);
-                     define("申请ID",$data["flag"]);
+                     define("QQ",raw["user_id"]);
+                     define("群号",raw["group_id"]);
+                     define("申请ID",raw["flag"]);
                 break;
             }
         }

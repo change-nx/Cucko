@@ -1,4 +1,5 @@
 <?php
+include(__DIR__."/other/qrcode.php");
 
 function wlog($name,$content) {
     $date = date('Y-m-d H:i:s');
@@ -124,5 +125,33 @@ function 读($文件, $键, $默认值 = null) {
     } finally {
         flock($fp, LOCK_UN); 
         fclose($fp);
+    }
+}
+
+function 二维码($content){
+ob_start();
+Toplib_Lib_QRcode::png($content, false, QR_ECLEVEL_L, 7, 1, false, [255,255,255], [0,0,0]);
+return base64_encode(ob_get_clean());
+}
+
+function puppeteer($html,$data = null) {
+    // 需前往napcat插件商店下载puppeteer
+    $api = "http://localhost:6099/plugin/napcat-plugin-puppeteer/api/screenshot";
+    $json = [
+        "file" => $html,
+        "data" => $data["data"],
+        "setViewport" => [
+            "width" => $data["width"],
+            "height" => $data["height"]
+        ]
+    ];
+    $json = json_encode($json,480);
+    $header = ['Content-Type: application/json'];
+    $response = curl($api,"POST",$header,$json);
+    $json = json_decode($response,true);
+    if ($json["code"] == 0) {
+        return $json["data"];
+    } else {
+        return null;
     }
 }
