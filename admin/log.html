@@ -1,0 +1,326 @@
+<div class="max-w-6xl mx-auto">
+    <div class="card mb-5">
+        <div class="flex items-center justify-between flex-wrap gap-3">
+            <div>
+                <h2 class="text-xl font-semibold text-slate-800">日志中心</h2>
+                <p class="text-slate-500 text-sm mt-1">查看机器人运行日志</p>
+            </div>
+            <button id="refreshBtn" class="btn-outline">
+                <i class="fas fa-sync-alt"></i> 刷新
+            </button>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <!-- 左侧日志列表 -->
+        <div class="card">
+            <h3 class="font-semibold text-slate-800 mb-3">日志文件</h3>
+            <div id="logFileList" class="log-file-list">
+                <div class="text-center py-4 text-slate-400">加载中...</div>
+            </div>
+        </div>
+
+        <!-- 右侧日志内容 -->
+        <div class="card md:col-span-2">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="font-semibold text-slate-800" id="logTitle">日志内容</h3>
+                <button id="deleteBtn" class="btn-outline-danger" style="display: none;">
+                    <i class="fas fa-trash"></i> 删除
+                </button>
+            </div>
+            <div id="logContent" class="log-content-scroll">
+                <div class="text-center py-8 text-slate-400">选择日志文件查看</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .max-w-6xl { max-width: 72rem; }
+    .mx-auto { margin-left: auto; margin-right: auto; }
+    .mb-5 { margin-bottom: 1.25rem; }
+    .mb-3 { margin-bottom: 0.75rem; }
+    .mt-1 { margin-top: 0.25rem; }
+    .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+    .py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+    
+    .card {
+        background: white;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+    
+    .log-file-list {
+        max-height: 500px;
+        overflow-y: auto;
+    }
+    
+    /* 左侧滚动条 - 加大 */
+    .log-file-list::-webkit-scrollbar {
+        width: 12px;
+    }
+    
+    .log-file-list::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 6px;
+    }
+    
+    .log-file-list::-webkit-scrollbar-thumb {
+        background: #94a3b8;
+        border-radius: 6px;
+        min-height: 60px;
+    }
+    
+    .log-file-list::-webkit-scrollbar-thumb:hover {
+        background: #64748b;
+    }
+    
+    .log-file-item {
+        padding: 10px 12px;
+        margin-bottom: 6px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        font-family: monospace;
+        border: 1px solid #eef2ff;
+    }
+    
+    .log-file-item:hover {
+        background: #f8fafc;
+    }
+    
+    .log-file-item.active {
+        background: #eff6ff;
+        border-color: #3b82f6;
+    }
+    
+    .log-content-scroll {
+        max-height: 500px;
+        overflow-y: auto;
+        font-family: monospace;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+    
+    /* 右侧滚动条 - 加大 */
+    .log-content-scroll::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+    }
+    
+    .log-content-scroll::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 6px;
+    }
+    
+    .log-content-scroll::-webkit-scrollbar-thumb {
+        background: #94a3b8;
+        border-radius: 6px;
+        min-height: 60px;
+    }
+    
+    .log-content-scroll::-webkit-scrollbar-thumb:hover {
+        background: #64748b;
+    }
+    
+    .log-line {
+        padding: 8px 12px;
+        border-bottom: 1px solid #f1f5f9;
+        white-space: pre-wrap;
+        word-break: break-all;
+        font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+    
+    .log-line:hover {
+        background: #fafbfc;
+    }
+    
+    .btn-outline {
+        padding: 6px 14px;
+        background: transparent;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+    }
+    
+    .btn-outline:hover {
+        background: #f8fafc;
+    }
+    
+    .btn-outline-danger {
+        padding: 4px 12px;
+        background: transparent;
+        border: 1px solid #fee2e2;
+        color: #ef4444;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+    }
+    
+    .btn-outline-danger:hover {
+        background: #fef2f2;
+    }
+    
+    .grid { display: grid; }
+    .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+    .gap-5 { gap: 1.25rem; }
+    .flex { display: flex; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .flex-wrap { flex-wrap: wrap; }
+    .gap-3 { gap: 0.75rem; }
+    .text-sm { font-size: 0.875rem; }
+    .text-xl { font-size: 1.25rem; }
+    .text-slate-400 { color: #94a3b8; }
+    .text-slate-500 { color: #64748b; }
+    .text-slate-800 { color: #1e293b; }
+    .font-semibold { font-weight: 600; }
+    
+    @media (min-width: 768px) {
+        .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .md\:col-span-2 { grid-column: span 2 / span 2; }
+    }
+</style>
+
+<script>
+    let currentFile = null;
+    let logFiles = [];
+    
+    async function loadFileList() {
+        const container = document.getElementById('logFileList');
+        container.innerHTML = '<div class="text-center py-4 text-slate-400">加载中...</div>';
+        
+        try {
+            const res = await fetch('../api.php?plat=onebot', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: 'log_list' })
+            });
+            const data = await res.json();
+            if (data.code === 200 && data.data) {
+                logFiles = data.data;
+                if (logFiles.length === 0) {
+                    container.innerHTML = '<div class="text-center py-4 text-slate-400">暂无日志</div>';
+                } else {
+                    container.innerHTML = logFiles.map(file => `
+                        <div class="log-file-item" data-file="${file}">${escapeHtml(file)}</div>
+                    `).join('');
+                    
+                    document.querySelectorAll('.log-file-item').forEach(el => {
+                        el.onclick = () => loadLogContent(el.dataset.file);
+                    });
+                }
+            }
+        } catch (err) {
+            container.innerHTML = '<div class="text-center py-4 text-red-400">加载失败</div>';
+        }
+    }
+    
+    async function loadLogContent(filename) {
+        currentFile = filename;
+        document.getElementById('logTitle').innerHTML = `<i class="fas fa-file-alt mr-2"></i>${escapeHtml(filename)}`;
+        document.getElementById('deleteBtn').style.display = 'flex';
+        
+        const container = document.getElementById('logContent');
+        container.innerHTML = '<div class="text-center py-8 text-slate-400">加载中...</div>';
+        
+        document.querySelectorAll('.log-file-item').forEach(el => {
+            el.classList.toggle('active', el.dataset.file === filename);
+        });
+        
+        try {
+            const res = await fetch('../api.php?plat=onebot', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: 'log_content', data: { name: filename } })
+            });
+            const data = await res.json();
+            renderLogContent(data);
+        } catch (err) {
+            container.innerHTML = '<div class="text-center py-8 text-red-400">加载失败</div>';
+        }
+    }
+    
+    function renderLogContent(data) {
+        const container = document.getElementById('logContent');
+        let lines = [];
+        
+        // 直接提取所有原始内容，不做解析
+        if (data.system) {
+            data.system.forEach(item => {
+                lines.push(JSON.stringify(item));
+            });
+        }
+        if (data.group) {
+            Object.values(data.group).forEach(groupMsgs => {
+                groupMsgs.forEach(msg => {
+                    lines.push(JSON.stringify(msg));
+                });
+            });
+        }
+        if (data.friend) {
+            Object.values(data.friend).forEach(friendMsgs => {
+                friendMsgs.forEach(msg => {
+                    lines.push(JSON.stringify(msg));
+                });
+            });
+        }
+        if (data.error) {
+            data.error.forEach(err => {
+                lines.push(err);
+            });
+        }
+        
+        if (lines.length === 0) {
+            container.innerHTML = '<div class="text-center py-8 text-slate-400">日志为空</div>';
+        } else {
+            container.innerHTML = lines.map(line => `<div class="log-line">${escapeHtml(line)}</div>`).join('');
+            // 滚动到顶部
+            container.scrollTop = 0;
+        }
+    }
+    
+    async function deleteCurrentLog() {
+        if (!currentFile) return;
+        if (!confirm(`确定删除 ${currentFile} 吗？`)) return;
+        
+        try {
+            const res = await fetch('../api.php?plat=onebot', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: 'log_delete', data: { name: currentFile } })
+            });
+            const data = await res.json();
+            if (data.code === 200) {
+                alert('删除成功');
+                currentFile = null;
+                document.getElementById('deleteBtn').style.display = 'none';
+                document.getElementById('logTitle').innerHTML = '日志内容';
+                document.getElementById('logContent').innerHTML = '<div class="text-center py-8 text-slate-400">选择日志文件查看</div>';
+                loadFileList();
+            } else {
+                alert('删除失败');
+            }
+        } catch (err) {
+            alert('删除失败: ' + err.message);
+        }
+    }
+    
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    document.getElementById('refreshBtn').onclick = loadFileList;
+    document.getElementById('deleteBtn').onclick = deleteCurrentLog;
+    loadFileList();
+</script>

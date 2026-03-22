@@ -160,7 +160,7 @@ echo $json;
 exit;
 
 function load_plugin() {
-    $All = glob(__DIR__."/Onebot/*.php");
+    $All = glob(__DIR__."/Onebot/*/main.php");
     foreach($All as $name) {
         try {
             require_once($name);

@@ -1,0 +1,19 @@
+{
+    "input_test": {
+        "title": "这是一个小标题",
+        "data": {
+            "desc": "输入框介绍",
+            "type": "input",
+            "value_type": "string",
+            "value": "输入框内容"
+        }
+    },
+    "switch_test": {
+        "title": "这是一个小标题",
+        "data": {
+            "desc": "开关介绍",
+            "type": "switch",
+            "value": false
+        }
+    }
+}

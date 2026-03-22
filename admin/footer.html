@@ -1,0 +1,83 @@
+    </div>
+
+    <script>
+        // 侧滑栏控制
+        const drawer = document.getElementById('drawer');
+        const overlay = document.getElementById('drawerOverlay');
+        const menuBtn = document.getElementById('menuBtn');
+
+        function closeDrawer() {
+            drawer.classList.remove('open');
+            overlay.classList.remove('open');
+        }
+
+        function openDrawer() {
+            drawer.classList.add('open');
+            overlay.classList.add('open');
+        }
+
+        if (menuBtn) {
+            menuBtn.addEventListener('click', openDrawer);
+        }
+
+        overlay.addEventListener('click', closeDrawer);
+
+        // 点击链接后移动端自动关闭侧边栏
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                if (window.innerWidth < 768) {
+                    setTimeout(closeDrawer, 100);
+                }
+            });
+        });
+
+        // 高亮当前页面
+        const currentPage = new URLSearchParams(window.location.search).get('type') || 'main';
+        document.querySelectorAll('.nav-item').forEach(item => {
+            const page = item.dataset.page;
+            if (page === currentPage) {
+                item.classList.add('active');
+            }
+        });
+
+        // 页面标题更新
+        const titles = {
+            main: '首页',
+            plugin: '插件管理',
+            log: '日志中心',
+            set: '系统设置'
+        };
+        const titleEl = document.getElementById('pageTitle');
+        if (titleEl && titles[currentPage]) {
+            titleEl.textContent = titles[currentPage];
+        }
+
+        // 退出登录
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                if (confirm('确定要退出登录吗？')) {
+                    try {
+                        const response = await fetch('../api.php?plat=admin', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                type: 'logout',
+                                data: { key: '' }
+                            })
+                        });
+                        const result = await response.json();
+                        if (result.code === 200) {
+                            window.location.href = 'index.html';
+                        }
+                    } catch (error) {
+                        console.error('退出失败', error);
+                        window.location.href = 'index.html';
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

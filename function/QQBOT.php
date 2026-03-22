@@ -55,19 +55,21 @@ function 文字($content) {
 }
 
 
-function 富媒体($type,$image) {
-    $types = ["图片" => 1, "视频" => 2, "语音" => 3];
+function 富媒体($type,$image,$name = null) {
+    $types = ["图片" => 1, "视频" => 2, "语音" => 3 , "文件" => 4];
     $t = $types[$type] ?? 1;
     if (preg_match('/^http(s)?:\/\//i', $image)) {
         $jsonData = [
             "file_type" => $t,
             "url" => $image,
+            "file_name" => $name,
             "srv_send_msg" => false
         ];
     } else {
         $jsonData = [
             "file_type" => $t,
             "file_data" => base64_encode($image),
+            "file_name" => $name,
             "srv_send_msg" => false
         ];
     }
@@ -137,6 +139,37 @@ function silk($link){
 function 语音($yy) {
    $silk = silk($yy);
    $file_info = 富媒体("语音",$silk);
+   if (isset($file_info['message'])) {
+       return 文字($file_info['message']);
+   }
+   $file = $file_info['file_info'];
+   
+   $json = [
+        "msg_type" => 7,
+        "msg_seq" => mt_rand(1, 9999),
+        "media" => ["file_info" => $file]
+   ];
+   
+   switch (消息来源) {
+     case "群聊":
+        $json["msg_id"] = 消息ID;
+        return BOTAPI("/v2/groups/".来源."/messages","POST",json_encode($json));
+        break;
+     case "私聊":
+        $json["msg_id"] = 消息ID;
+        return BOTAPI("/v2/users/".来源."/messages","POST",json_encode($json));
+        break;
+     case "加群":
+     case "退群":
+     case "互动":
+        $json["event_id"] = 事件ID;
+        return BOTAPI("/v2/groups/".来源."/messages","POST",json_encode($json));
+        break;
+   }
+}
+
+function 文件($yy,$nm) {
+   $file_info = 富媒体("文件",$yy,$nm);
    if (isset($file_info['message'])) {
        return 文字($file_info['message']);
    }

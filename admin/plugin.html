@@ -1,0 +1,723 @@
+<div class="max-w-6xl mx-auto">
+    <!-- 头部 -->
+    <div class="card mb-5">
+        <div class="flex items-center justify-between flex-wrap gap-3">
+            <div>
+                <h2 class="text-xl font-semibold text-slate-800">Plugin Control</h2>
+            </div>
+            <button id="refreshBtn" class="btn-outline flex items-center gap-2">
+                <i class="fas fa-sync-alt"></i>
+                <span>重载</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 插件列表 -->
+    <div id="pluginList" class="space-y-4">
+        <div class="card text-center py-12">
+            <i class="fas fa-spinner fa-spin text-blue-500 text-3xl"></i>
+            <p class="text-slate-500 mt-3">加载插件列表...</p>
+        </div>
+    </div>
+</div>
+
+<!-- 管理弹窗 -->
+<div id="manageModal" class="modal-overlay" style="display: none;">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3 id="modalTitle">插件配置</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBody">
+            <!-- 动态表单 -->
+        </div>
+        <div class="modal-footer">
+            <button class="btn-outline modal-cancel">取消</button>
+            <button class="btn-primary modal-save">保存</button>
+        </div>
+    </div>
+</div>
+
+<!-- 文档弹窗 -->
+<div id="docModal" class="modal-overlay" style="display: none;">
+    <div class="modal-container modal-large">
+        <div class="modal-header">
+            <h3 id="docTitle">插件文档</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body" id="docBody">
+            <div class="markdown-body"></div>
+        </div>
+    </div>
+</div>
+
+<!-- 三点菜单弹窗 -->
+<div id="actionMenu" class="action-menu" style="display: none;">
+    <div class="action-menu-item" data-action="manage">
+        <i class="fas fa-sliders-h"></i>
+        <span>管理</span>
+    </div>
+    <div class="action-menu-item" data-action="doc">
+        <i class="fas fa-book"></i>
+        <span>文档</span>
+    </div>
+</div>
+
+<style>
+    /* 插件卡片样式 */
+    .plugin-card {
+        background: white;
+        border-radius: 16px;
+        padding: 20px;
+        transition: all 0.2s;
+        border: 1px solid #eef2ff;
+    }
+    
+    .plugin-card:hover {
+        border-color: #cbd5e1;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .plugin-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 12px;
+    }
+    
+    .plugin-name {
+        font-size: 18px;
+        font-weight: 600;
+        color: #0f172a;
+    }
+    
+    .plugin-author {
+        font-size: 12px;
+        color: #94a3b8;
+        margin-top: 4px;
+    }
+    
+    .plugin-desc {
+        font-size: 14px;
+        color: #475569;
+        line-height: 1.5;
+        margin-top: 8px;
+    }
+    
+    /* 三点菜单 */
+    .more-btn {
+        background: none;
+        border: none;
+        font-size: 20px;
+        color: #94a3b8;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 8px;
+        transition: all 0.2s;
+    }
+    
+    .more-btn:hover {
+        background: #f1f5f9;
+        color: #475569;
+    }
+    
+    .action-menu {
+        position: fixed;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+        z-index: 1000;
+        min-width: 140px;
+        overflow: hidden;
+        border: 1px solid #eef2ff;
+    }
+    
+    .action-menu-item {
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+        transition: background 0.2s;
+        font-size: 14px;
+        color: #334155;
+    }
+    
+    .action-menu-item i {
+        width: 20px;
+        font-size: 14px;
+        color: #64748b;
+    }
+    
+    .action-menu-item:hover {
+        background: #f8fafc;
+    }
+    
+    /* 弹窗样式 */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1100;
+        backdrop-filter: blur(4px);
+    }
+    
+    .modal-container {
+        background: white;
+        border-radius: 24px;
+        width: 90%;
+        max-width: 500px;
+        max-height: 85vh;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    
+    .modal-large {
+        max-width: 800px;
+    }
+    
+    .modal-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid #eef2ff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .modal-header h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #0f172a;
+    }
+    
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #94a3b8;
+        padding: 0;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+    }
+    
+    .modal-close:hover {
+        background: #f1f5f9;
+        color: #475569;
+    }
+    
+    .modal-body {
+        padding: 24px;
+        overflow-y: auto;
+        flex: 1;
+    }
+    
+    .modal-footer {
+        padding: 16px 24px;
+        border-top: 1px solid #eef2ff;
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+    }
+    
+    /* 表单样式 */
+    .form-item {
+        margin-bottom: 24px;
+    }
+    
+    .form-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .form-label {
+        font-size: 15px;
+        font-weight: 500;
+        color: #1e293b;
+        margin-bottom: 4px;
+        display: block;
+    }
+    
+    .form-desc {
+        font-size: 12px;
+        color: #94a3b8;
+        margin-bottom: 10px;
+    }
+    
+    .form-input {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 14px;
+        transition: all 0.2s;
+        background: #fafbfc;
+    }
+    
+    .form-input:focus {
+        outline: none;
+        border-color: #3b82f6;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    /* 开关样式 */
+    .switch-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 48px;
+        height: 26px;
+        flex-shrink: 0;
+    }
+    
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #cbd5e1;
+        transition: 0.3s;
+        border-radius: 34px;
+    }
+    
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 20px;
+        width: 20px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.3s;
+        border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+        background-color: #3b82f6;
+    }
+    
+    input:checked + .slider:before {
+        transform: translateX(22px);
+    }
+    
+    /* Markdown 基础样式 */
+    .markdown-body {
+        font-size: 14px;
+        line-height: 1.6;
+        color: #334155;
+    }
+    
+    .markdown-body h1 { font-size: 24px; margin: 20px 0 12px; font-weight: 600; border-bottom: 1px solid #eef2ff; padding-bottom: 8px; }
+    .markdown-body h2 { font-size: 20px; margin: 16px 0 10px; font-weight: 600; }
+    .markdown-body h3 { font-size: 18px; margin: 14px 0 8px; font-weight: 600; }
+    .markdown-body p { margin: 12px 0; }
+    .markdown-body a { color: #3b82f6; text-decoration: none; }
+    .markdown-body a:hover { text-decoration: underline; }
+    .markdown-body code { background: #f1f5f9; padding: 2px 6px; border-radius: 6px; font-family: 'SF Mono', Monaco, monospace; font-size: 13px; }
+    .markdown-body pre { background: #f1f5f9; padding: 12px; border-radius: 12px; overflow-x: auto; margin: 12px 0; }
+    .markdown-body pre code { background: none; padding: 0; }
+    .markdown-body ul, .markdown-body ol { padding-left: 24px; margin: 12px 0; }
+    .markdown-body li { margin: 6px 0; }
+    .markdown-body blockquote { border-left: 3px solid #3b82f6; padding-left: 16px; color: #64748b; margin: 12px 0; }
+    .markdown-body img { max-width: 100%; border-radius: 12px; }
+    .markdown-body table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+    .markdown-body th, .markdown-body td { border: 1px solid #e2e8f0; padding: 8px 12px; text-align: left; }
+    .markdown-body th { background: #f8fafc; font-weight: 600; }
+    
+    .space-y-4 > :not(:last-child) { margin-bottom: 1rem; }
+    .flex { display: flex; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .justify-end { justify-content: flex-end; }
+    .flex-wrap { flex-wrap: wrap; }
+    .gap-2 { gap: 0.5rem; }
+    .gap-3 { gap: 0.75rem; }
+    .mt-1 { margin-top: 0.25rem; }
+    .mt-3 { margin-top: 0.75rem; }
+    .mb-5 { margin-bottom: 1.25rem; }
+    .py-12 { padding-top: 3rem; padding-bottom: 3rem; }
+    .text-center { text-align: center; }
+    .text-sm { font-size: 0.875rem; }
+    .text-xl { font-size: 1.25rem; }
+    .text-3xl { font-size: 1.875rem; }
+    .text-slate-500 { color: #64748b; }
+    .text-slate-800 { color: #1e293b; }
+    .text-blue-500 { color: #3b82f6; }
+    .font-semibold { font-weight: 600; }
+    .btn-outline { padding: 8px 16px; background: transparent; border: 1px solid #e2e8f0; border-radius: 10px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
+    .btn-outline:hover { background: #f8fafc; border-color: #cbd5e1; }
+    .btn-primary { padding: 8px 20px; background: #3b82f6; color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.2s; }
+    .btn-primary:hover { background: #2563eb; }
+</style>
+
+<script>
+    let currentPlugins = [];
+    let currentPluginName = '';
+    let currentPluginBackend = {};
+    
+    // 加载插件列表
+    async function loadPlugins() {
+        const container = document.getElementById('pluginList');
+        container.innerHTML = `
+            <div class="card text-center py-12">
+                <i class="fas fa-spinner fa-spin text-blue-500 text-3xl"></i>
+                <p class="text-slate-500 mt-3">加载插件列表...</p>
+            </div>
+        `;
+        
+        try {
+            const response = await fetch('../api.php?plat=onebot', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: 'plugin_list' })
+            });
+            const result = await response.json();
+            
+            if (result.code === 200 && result.data) {
+                currentPlugins = result.data;
+                renderPluginList(currentPlugins);
+            } else {
+                container.innerHTML = `
+                    <div class="card text-center py-12">
+                        <i class="fas fa-folder-open text-slate-400 text-3xl"></i>
+                        <p class="text-slate-500 mt-3">暂无插件</p>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.error('加载插件失败:', error);
+            container.innerHTML = `
+                <div class="card text-center py-12">
+                    <i class="fas fa-exclamation-triangle text-amber-500 text-3xl"></i>
+                    <p class="text-slate-500 mt-3">加载失败，请重试</p>
+                </div>
+            `;
+        }
+    }
+    
+    // 渲染插件列表
+    function renderPluginList(plugins) {
+        const container = document.getElementById('pluginList');
+        if (!plugins.length) {
+            container.innerHTML = `
+                <div class="card text-center py-12">
+                    <i class="fas fa-folder-open text-slate-400 text-3xl"></i>
+                    <p class="text-slate-500 mt-3">暂无插件</p>
+                </div>
+            `;
+            return;
+        }
+        
+        container.innerHTML = plugins.map(plugin => `
+            <div class="plugin-card" data-plugin="${plugin.name}">
+                <div class="plugin-header">
+                    <div>
+                        <div class="plugin-name">${escapeHtml(plugin.name)}</div>
+                        <div class="plugin-author">作者: ${escapeHtml(plugin.author || '未知')}</div>
+                    </div>
+                    <button class="more-btn" data-plugin="${plugin.name}">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </div>
+                <div class="plugin-desc">${escapeHtml(plugin.desc || '暂无介绍')}</div>
+            </div>
+        `).join('');
+        
+        // 绑定三点菜单事件
+        document.querySelectorAll('.more-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const pluginName = btn.dataset.plugin;
+                const plugin = plugins.find(p => p.name === pluginName);
+                showActionMenu(e.target.closest('.more-btn'), plugin);
+            });
+        });
+    }
+    
+    // 显示三点菜单
+    function showActionMenu(btn, plugin) {
+        const existingMenu = document.getElementById('actionMenu');
+        if (existingMenu) {
+            existingMenu.remove();
+        }
+        
+        const rect = btn.getBoundingClientRect();
+        const menu = document.createElement('div');
+        menu.id = 'actionMenu';
+        menu.className = 'action-menu';
+        menu.style.top = `${rect.bottom + 4}px`;
+        menu.style.right = `${window.innerWidth - rect.right}px`;
+        menu.innerHTML = `
+            <div class="action-menu-item" data-action="manage">
+                <i class="fas fa-sliders-h"></i>
+                <span>管理</span>
+            </div>
+            <div class="action-menu-item" data-action="doc">
+                <i class="fas fa-book"></i>
+                <span>文档</span>
+            </div>
+        `;
+        document.body.appendChild(menu);
+        menu.style.display = 'block';
+        
+        const handleClick = (e) => {
+            const item = e.target.closest('.action-menu-item');
+            if (item) {
+                const action = item.dataset.action;
+                if (action === 'manage') {
+                    openManageModal(plugin);
+                } else if (action === 'doc') {
+                    openDocModal(plugin);
+                }
+                closeActionMenu();
+            }
+        };
+        
+        const closeActionMenu = () => {
+            menu.remove();
+            document.removeEventListener('click', closeHandler);
+        };
+        
+        const closeHandler = (e) => {
+            if (!menu.contains(e.target) && e.target !== btn) {
+                closeActionMenu();
+            }
+        };
+        
+        setTimeout(() => {
+            document.addEventListener('click', closeHandler);
+        }, 0);
+        
+        menu.addEventListener('click', handleClick);
+    }
+    
+    // 打开管理弹窗
+    function openManageModal(plugin) {
+        const backend = plugin.backend || {};
+        const modal = document.getElementById('manageModal');
+        const modalBody = document.getElementById('modalBody');
+        const modalTitle = document.getElementById('modalTitle');
+        
+        modalTitle.textContent = `${plugin.name} - 配置管理`;
+        currentPluginName = plugin.name;
+        currentPluginBackend = JSON.parse(JSON.stringify(backend));
+        
+        // 生成表单
+        let formHtml = '';
+        for (const [key, config] of Object.entries(backend)) {
+            const title = config.title || key;
+            const data = config.data || {};
+            const type = data.type || 'input';
+            const desc = data.desc || '';
+            const value = data.value !== undefined ? data.value : (type === 'switch' ? false : '');
+            const valueType = data.value_type || 'string';
+            
+            formHtml += `
+                <div class="form-item" data-key="${key}">
+                    <div class="form-label">${escapeHtml(title)}</div>
+                    <div class="form-desc">${escapeHtml(desc)}</div>
+            `;
+            
+            if (type === 'switch') {
+                formHtml += `
+                    <div class="switch-wrapper">
+                        <div></div>
+                        <label class="switch">
+                            <input type="checkbox" class="switch-input" data-key="${key}" data-type="${type}" data-value-type="${valueType}" ${value ? 'checked' : ''}>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                `;
+            } else {
+                formHtml += `
+                    <input type="text" class="form-input" data-key="${key}" data-type="${type}" data-value-type="${valueType}" value="${escapeHtml(String(value))}" placeholder="请输入${escapeHtml(title)}">
+                `;
+            }
+            
+            formHtml += `</div>`;
+        }
+        
+        if (Object.keys(backend).length === 0) {
+            formHtml = '<div class="text-center text-slate-500 py-8">该插件暂无配置项</div>';
+        }
+        
+        modalBody.innerHTML = formHtml;
+        modal.style.display = 'flex';
+    }
+    
+    // 打开文档弹窗
+    async function openDocModal(plugin) {
+        const modal = document.getElementById('docModal');
+        const docBody = document.getElementById('docBody');
+        const docTitle = document.getElementById('docTitle');
+        
+        docTitle.textContent = `${plugin.name} - 文档`;
+        docBody.innerHTML = '<div class="text-center py-8"><i class="fas fa-spinner fa-spin text-blue-500"></i> 加载中...</div>';
+        modal.style.display = 'flex';
+        
+        try {
+            const readme = plugin.README || '# 暂无文档\n\n该插件没有提供说明文档。';
+            const html = renderMarkdown(readme);
+            docBody.innerHTML = `<div class="markdown-body">${html}</div>`;
+        } catch (error) {
+            docBody.innerHTML = '<div class="text-center text-red-500 py-8">文档加载失败</div>';
+        }
+    }
+    
+    // 简单Markdown渲染
+    function renderMarkdown(md) {
+        let html = md;
+        // 转义HTML
+        html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        // 标题
+        html = html.replace(/^# (.*)$/gm, '<h1>$1</h1>');
+        html = html.replace(/^## (.*)$/gm, '<h2>$1</h2>');
+        html = html.replace(/^### (.*)$/gm, '<h3>$1</h3>');
+        // 粗体
+        html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        // 斜体
+        html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+        // 链接
+        html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+        // 行内代码
+        html = html.replace(/`(.*?)`/g, '<code>$1</code>');
+        // 换行
+        html = html.replace(/\n/g, '<br>');
+        return html;
+    }
+    
+    // 保存配置
+    async function savePluginConfig() {
+        const modalBody = document.getElementById('modalBody');
+        const inputs = modalBody.querySelectorAll('.form-input');
+        const switches = modalBody.querySelectorAll('.switch-input');
+        
+        // 构建新的 backend 结构
+        const newBackend = JSON.parse(JSON.stringify(currentPluginBackend));
+        
+        inputs.forEach(input => {
+            const key = input.dataset.key;
+            const valueType = input.dataset.valueType;
+            let value = input.value;
+            
+            // 根据 value_type 转换类型
+            if (valueType === 'int') {
+                value = parseInt(value) || 0;
+            } else if (valueType === 'bool') {
+                value = value === 'true' || value === '1' || value === 'on';
+            }
+            
+            if (newBackend[key] && newBackend[key].data) {
+                newBackend[key].data.value = value;
+            }
+        });
+        
+        switches.forEach(switchInput => {
+            const key = switchInput.dataset.key;
+            const value = switchInput.checked;
+            
+            if (newBackend[key] && newBackend[key].data) {
+                newBackend[key].data.value = value;
+            }
+        });
+        
+        try {
+            const response = await fetch('../api.php?plat=onebot', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    type: 'plugin_backend',
+                    data: {
+                        name: currentPluginName,
+                        backend: newBackend
+                    }
+                })
+            });
+            const result = await response.json();
+            
+            if (result.code === 200) {
+                alert('保存成功');
+                closeManageModal();
+                loadPlugins(); // 刷新列表
+            } else {
+                alert('保存失败: ' + (result.msg || '未知错误'));
+            }
+        } catch (error) {
+            console.error('保存失败:', error);
+            alert('保存失败，请检查网络');
+        }
+    }
+    
+    // 关闭管理弹窗
+    function closeManageModal() {
+        document.getElementById('manageModal').style.display = 'none';
+    }
+    
+    // 关闭文档弹窗
+    function closeDocModal() {
+        document.getElementById('docModal').style.display = 'none';
+    }
+    
+    // HTML转义
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    // 事件绑定
+    document.addEventListener('DOMContentLoaded', () => {
+        loadPlugins();
+        
+        document.getElementById('refreshBtn')?.addEventListener('click', loadPlugins);
+        
+        // 管理弹窗关闭
+        document.querySelectorAll('#manageModal .modal-close, #manageModal .modal-cancel').forEach(btn => {
+            btn.addEventListener('click', closeManageModal);
+        });
+        
+        document.querySelector('#manageModal .modal-save')?.addEventListener('click', savePluginConfig);
+        
+        // 文档弹窗关闭
+        document.querySelectorAll('#docModal .modal-close').forEach(btn => {
+            btn.addEventListener('click', closeDocModal);
+        });
+        
+        // 点击遮罩关闭
+        document.getElementById('manageModal')?.addEventListener('click', (e) => {
+            if (e.target === document.getElementById('manageModal')) closeManageModal();
+        });
+        
+        document.getElementById('docModal')?.addEventListener('click', (e) => {
+            if (e.target === document.getElementById('docModal')) closeDocModal();
+        });
+    });
+</script>

@@ -1,0 +1,301 @@
+<div class="max-w-6xl mx-auto">
+    <div class="card mb-5">
+        <div class="flex items-center justify-between flex-wrap gap-3">
+            <div>
+                <h2 class="text-xl font-semibold text-slate-800">系统设置</h2>
+            </div>
+            <button id="saveBtn" class="btn-primary">
+                <i class="fas fa-save"></i> 保存配置
+            </button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="form-group">
+            <label class="form-label">机器人QQ号</label>
+            <input type="number" id="qq" class="form-input" placeholder="请输入机器人QQ号">
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">API服务器地址</label>
+            <input type="text" id="api" class="form-input" placeholder="http://127.0.0.1:3000">
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">API Token</label>
+            <input type="text" id="apiToken" class="form-input" placeholder="API 鉴权 Token">
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">HTTP Token</label>
+            <input type="text" id="httpToken" class="form-input" placeholder="HTTP 鉴权 Token">
+        </div>
+        
+        <div class="form-group">
+            <div class="switch-wrapper">
+                <span class="form-label">自触模式</span>
+                <label class="switch">
+                    <input type="checkbox" id="touch">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">主人列表</label>
+            <div id="ownerList" class="owner-list"></div>
+            <button id="addOwnerBtn" class="btn-outline mt-2">+ 添加主人</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .max-w-6xl { max-width: 72rem; }
+    .mx-auto { margin-left: auto; margin-right: auto; }
+    .mb-5 { margin-bottom: 1.25rem; }
+    .mt-2 { margin-top: 0.5rem; }
+    
+    .card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group:last-child {
+        margin-bottom: 0;
+    }
+    
+    .form-label {
+        font-size: 14px;
+        font-weight: 500;
+        color: #1e293b;
+        margin-bottom: 8px;
+        display: block;
+    }
+    
+    .form-input {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 14px;
+        transition: all 0.2s;
+    }
+    
+    .form-input:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    .switch-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 48px;
+        height: 26px;
+    }
+    
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #cbd5e1;
+        transition: 0.3s;
+        border-radius: 34px;
+    }
+    
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 20px;
+        width: 20px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.3s;
+        border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+        background-color: #3b82f6;
+    }
+    
+    input:checked + .slider:before {
+        transform: translateX(22px);
+    }
+    
+    .owner-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .owner-tag {
+        background: #f1f5f9;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .owner-tag button {
+        background: none;
+        border: none;
+        color: #94a3b8;
+        cursor: pointer;
+        font-size: 12px;
+    }
+    
+    .owner-tag button:hover {
+        color: #ef4444;
+    }
+    
+    .btn-primary {
+        padding: 8px 20px;
+        background: #3b82f6;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    
+    .btn-primary:hover {
+        background: #2563eb;
+    }
+    
+    .btn-outline {
+        padding: 6px 14px;
+        background: transparent;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+    }
+    
+    .btn-outline:hover {
+        background: #f8fafc;
+    }
+    
+    .flex { display: flex; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .flex-wrap { flex-wrap: wrap; }
+    .gap-3 { gap: 0.75rem; }
+    .text-sm { font-size: 0.875rem; }
+    .text-xl { font-size: 1.25rem; }
+    .text-slate-500 { color: #64748b; }
+    .text-slate-800 { color: #1e293b; }
+    .font-semibold { font-weight: 600; }
+</style>
+
+<script>
+    let owners = [];
+    
+    async function loadConfig() {
+        try {
+            const res = await fetch('../api.php?plat=onebot', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: 'get_info' })
+            });
+            const data = await res.json();
+            if (data.code === 200 && data.data) {
+                document.getElementById('qq').value = data.data.qq || '';
+                document.getElementById('api').value = data.data.api || '';
+                document.getElementById('apiToken').value = data.data.api_token || '';
+                document.getElementById('httpToken').value = data.data.http_token || '';
+                document.getElementById('touch').checked = data.data.touch || false;
+                owners = data.data.owner || [];
+                renderOwners();
+            }
+        } catch (err) {
+            alert('加载失败: ' + err.message);
+        }
+    }
+    
+    function renderOwners() {
+        const container = document.getElementById('ownerList');
+        if (!owners.length) {
+            container.innerHTML = '<span class="text-slate-400 text-sm">暂无主人</span>';
+            return;
+        }
+        container.innerHTML = owners.map(owner => `
+            <div class="owner-tag">
+                <span>${owner}</span>
+                <button onclick="removeOwner('${owner}')">&times;</button>
+            </div>
+        `).join('');
+    }
+    
+    function removeOwner(qq) {
+        owners = owners.filter(o => o != qq);
+        renderOwners();
+    }
+    
+    function addOwner() {
+        const qq = prompt('请输入主人QQ号');
+        if (qq && /^\d+$/.test(qq) && !owners.includes(qq)) {
+            owners.push(qq);
+            renderOwners();
+        } else if (owners.includes(qq)) {
+            alert('该主人已存在');
+        } else if (!/^\d+$/.test(qq)) {
+            alert('请输入正确的QQ号');
+        }
+    }
+    
+    async function saveConfig() {
+        const config = {
+            qq: document.getElementById('qq').value,
+            api: document.getElementById('api').value,
+            api_token: document.getElementById('apiToken').value,
+            http_token: document.getElementById('httpToken').value,
+            touch: document.getElementById('touch').checked,
+            owner: owners
+        };
+        
+        try {
+            const res = await fetch('../api.php?plat=onebot', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: 'add', data: config })
+            });
+            const data = await res.json();
+            if (data.code === 200) {
+                alert('保存成功');
+            } else {
+                alert('保存失败: ' + (data.msg || '未知错误'));
+            }
+        } catch (err) {
+            alert('保存失败: ' + err.message);
+        }
+    }
+    
+    document.getElementById('saveBtn').onclick = saveConfig;
+    document.getElementById('addOwnerBtn').onclick = addOwner;
+    loadConfig();
+</script>

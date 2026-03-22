@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Cucko 管理后台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f1f5f9;
+            min-height: 100vh;
+        }
+
+        /* 侧滑栏容器 */
+        .drawer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 280px;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            transform: translateX(-100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+
+        .drawer.open {
+            transform: translateX(0);
+        }
+
+        /* 遮罩层 */
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .drawer-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 侧边栏头部 */
+        .drawer-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .drawer-header img {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        .drawer-header h1 {
+            font-size: 20px;
+            font-weight: 600;
+            color: white;
+            letter-spacing: 1px;
+        }
+
+        .drawer-header p {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+
+        /* 导航菜单 */
+        .nav-menu {
+            padding: 20px 12px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 12px;
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .nav-item i {
+            width: 24px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        /* 退出按钮 */
+        .logout-btn {
+            margin-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+            color: #f87171;
+        }
+
+        .logout-btn:hover {
+            background: rgba(248, 113, 113, 0.15);
+            color: #fecaca;
+        }
+
+        /* 顶部栏 */
+        .top-bar {
+            position: sticky;
+            top: 0;
+            background: white;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #334155;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .menu-btn:hover {
+            background: #f1f5f9;
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        /* 主内容区 */
+        .main-content {
+            min-height: calc(100vh - 64px);
+            padding: 20px;
+        }
+
+        /* 响应式 - 桌面端侧边栏常驻 */
+        @media (min-width: 768px) {
+            .drawer {
+                transform: translateX(0);
+                position: fixed;
+                left: 0;
+                top: 0;
+                bottom: 0;
+            }
+
+            .drawer-overlay {
+                display: none;
+            }
+
+            .top-bar {
+                margin-left: 280px;
+                width: calc(100% - 280px);
+            }
+
+            .main-content {
+                margin-left: 280px;
+            }
+
+            .menu-btn {
+                display: none;
+            }
+        }
+
+        /* 滚动条 */
+        .drawer::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .drawer::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .drawer::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+
+        /* 卡片样式 */
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: box-shadow 0.2s;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn {
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+        }
+
+        .btn-outline:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        .input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #475569;
+            margin-bottom: 6px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- 遮罩层 -->
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+
+    <!-- 侧滑栏 -->
+    <div class="drawer" id="drawer">
+        <div class="drawer-header">
+            <img src="../logo.png" alt="logo" onerror="this.src='https://placehold.co/48x48/3b82f6/white?text=C'">
+            <div>
+                <h1>Cucko</h1>
+                <p>OneBot 管理平台</p>
+            </div>
+        </div>
+        <div class="nav-menu">
+            <a href="?type=main" class="nav-item" data-page="main">
+                <i class="fas fa-home"></i>
+                <span>首页</span>
+            </a>
+            <a href="?type=plugin" class="nav-item" data-page="plugin">
+                <i class="fas fa-puzzle-piece"></i>
+                <span>插件管理</span>
+            </a>
+            <a href="?type=log" class="nav-item" data-page="log">
+                <i class="fas fa-history"></i>
+                <span>日志中心</span>
+            </a>
+            <a href="?type=set" class="nav-item" data-page="set">
+                <i class="fas fa-cog"></i>
+                <span>系统设置</span>
+            </a>
+            <a href="#" class="nav-item logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>退出登录</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- 顶部栏 -->
+    <div class="top-bar">
+        <button class="menu-btn" id="menuBtn">
+            <i class="fas fa-bars"></i>
+        </button>
+        <span class="page-title" id="pageTitle">首页</span>
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
