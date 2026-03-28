@@ -421,39 +421,18 @@ function 撤回($id){
    return BOTAPI("/v2/{$type}/".来源."/messages/".$id,"DELETE","");
 }
 
-function MD($id, $md, $keyboard = null) {
+function MD($md, $keyboard = null) {
    $json = [
        "content" => "",
        "msg_type" => 2,
        "msg_seq" => rand(1, 9999),
        "markdown" => [
-           "custom_template_id" => $id,
-           "params" => [],
+           "content" => $md,
        ],
        "keyboard" => [
            "id" => $keyboard
        ]
    ];
-   
-   $params = [];
-   foreach ($md as $name => $value) {
-       if (!isset($params[$name])) {
-           $params[$name] = [];
-       }
-       
-       if (is_array($value)) {
-           $params[$name] = array_merge($params[$name], $value);
-       } else {
-           $params[$name][] = $value;
-       }
-   }
-   
-   foreach ($params as $key => $values) {
-       $json["markdown"]["params"][] = [
-           "key" => $key,
-           "values" => $values
-       ];
-   }
    
    switch (消息来源) {
      case "群聊":

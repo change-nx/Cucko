@@ -1,6 +1,7 @@
 <?php
 define("onebot",require("config/onebot.php"));
 define("key",require("key.php"));
+require("function/other/Parsedown.php");
 
 
 $raw = file_get_contents("php://input");
@@ -245,11 +246,22 @@ if ($plat == "onebot") {
                 $info = file_get_contents($value);
                 $json = json_decode($info,true);
                 $dir = dirname($value);
-                $backed = file_get_contents($dir."/backend.json");
-                $backend = json_decode($backed,true);
+                if (is_file($dir."/backend.json")) {
+                    $backed = file_get_contents($dir."/backend.json");
+                    $backend = json_decode($backed,true);
+                } else {
+                    $backend = null;
+                }
                 $json["backend"] = $backend;
                 
-                $README = file_get_contents($dir."/README.md");
+                if (is_file($dir."/README.md")) {
+                    $README = file_get_contents($dir."/README.md");
+                } else {
+                    $README = "该插件没有提供任何文档哦";
+                }
+                
+                $Parsedown = new Parsedown();
+                $README = $Parsedown->text($README);
                 $json["README"] = $README;
                 
                 

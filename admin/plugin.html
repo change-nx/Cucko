@@ -517,7 +517,8 @@
     
     // 打开管理弹窗
     function openManageModal(plugin) {
-        const backend = plugin.backend || {};
+        // 处理 backend 为 null 的情况
+        const backend = (plugin.backend === null || plugin.backend === undefined) ? {} : plugin.backend;
         const modal = document.getElementById('manageModal');
         const modalBody = document.getElementById('modalBody');
         const modalTitle = document.getElementById('modalTitle');
@@ -526,7 +527,7 @@
         currentPluginName = plugin.name;
         currentPluginBackend = JSON.parse(JSON.stringify(backend));
         
-        // 生成表单
+        // 生成表单 - 只支持 switch 和 input
         let formHtml = '';
         for (const [key, config] of Object.entries(backend)) {
             const title = config.title || key;
@@ -535,6 +536,11 @@
             const desc = data.desc || '';
             const value = data.value !== undefined ? data.value : (type === 'switch' ? false : '');
             const valueType = data.value_type || 'string';
+            
+            // 只处理 switch 和 input 类型
+            if (type !== 'switch' && type !== 'input') {
+                continue;
+            }
             
             formHtml += `
                 <div class="form-item" data-key="${key}">
@@ -580,34 +586,12 @@
         modal.style.display = 'flex';
         
         try {
-            const readme = plugin.README || '# 暂无文档\n\n该插件没有提供说明文档。';
-            const html = renderMarkdown(readme);
-            docBody.innerHTML = `<div class="markdown-body">${html}</div>`;
+            // README 直接输出 HTML，不进行解析
+            const readme = plugin.README || '<p>暂无文档</p>';
+            docBody.innerHTML = `<div class="markdown-body">${readme}</div>`;
         } catch (error) {
             docBody.innerHTML = '<div class="text-center text-red-500 py-8">文档加载失败</div>';
         }
-    }
-    
-    // 简单Markdown渲染
-    function renderMarkdown(md) {
-        let html = md;
-        // 转义HTML
-        html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        // 标题
-        html = html.replace(/^# (.*)$/gm, '<h1>$1</h1>');
-        html = html.replace(/^## (.*)$/gm, '<h2>$1</h2>');
-        html = html.replace(/^### (.*)$/gm, '<h3>$1</h3>');
-        // 粗体
-        html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        // 斜体
-        html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
-        // 链接
-        html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-        // 行内代码
-        html = html.replace(/`(.*?)`/g, '<code>$1</code>');
-        // 换行
-        html = html.replace(/\n/g, '<br>');
-        return html;
     }
     
     // 保存配置
