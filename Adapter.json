@@ -1,0 +1,16 @@
+[
+    {
+        "id": "测试",
+        "QQ": 10001,
+        "type": "OneBot",
+        "token": "上报Token",
+        "API": "http://127.0.0.1:3000",
+        "APItoken": "HTTPtoken"
+    },
+    {
+        "id": "官机",
+        "type": "QQ",
+        "appid": "appid",
+        "secret": "secret"
+    }
+]

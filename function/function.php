@@ -3,7 +3,7 @@ include(__DIR__."/other/qrcode.php");
 
 function wlog($name,$content) {
     $date = date('Y-m-d H:i:s');
-    $logDir = dirname(__DIR__,1)."/log/{$name}";
+    $logDir = dirname(__DIR__,1)."/Log/{$name}";
     $logFile = $logDir . '/' . date('Y-m-d') . '.log';
     if (!is_dir($logDir)) {
         mkdir($logDir, 0777, true);
