@@ -50,6 +50,7 @@ function Plugin_Run($raw){
 $event = $raw["t"];
 switch($event) {
     case "GROUP_AT_MESSAGE_CREATE":
+    case "GROUP_MESSAGE_CREATE":
         define("事件", "群聊");
         define("消息ID", $raw["d"]["id"]);
         define("消息", trim($raw["d"]["content"], "/ "));
@@ -82,6 +83,7 @@ switch($event) {
         define("事件", "回调");
         define("事件ID", $raw["id"]);
         define("群号", $raw["d"]["group_openid"]);
+        define("消息",$raw["d"]["data"]["resolved"]["button_data"]);
         break;
 }
   require("function/QQ/main.php");

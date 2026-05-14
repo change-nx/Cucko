@@ -1138,3 +1138,18 @@ function 发送AI语音($group,$id,$text) {
         return false;
     }
 }
+
+function 消息详情($id) {
+    $json = [
+        "message_id" => $id
+    ];
+    $json = json_encode($json);
+    $response = BOTAPI("/get_msg",$json);
+    $response_json = json_decode($response,true);
+    $status = $response_json["status"];
+    if ($status == "ok") {
+        return json_encode($response_json["data"],480);
+    } else {
+        return false;
+    }
+}
