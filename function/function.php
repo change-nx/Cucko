@@ -155,3 +155,32 @@ function puppeteer($html,$data = null) {
         return null;
     }
 }
+
+function 图床($data) {
+    $apiUrl = 'https://img.scdn.io/api/v1.php';
+    
+    // 创建临时文件保存二进制数据
+    $tempFile = tmpfile();
+    fwrite($tempFile, $data);
+    $tempFilePath = stream_get_meta_data($tempFile)['uri'];
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $apiUrl);
+    curl_setopt($ch, CURLOPT_POST, true);
+    
+    $postData = [
+        'image' => new CURLFile($tempFilePath)
+    ];
+    
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    // 关闭并删除临时文件
+    fclose($tempFile);
+    
+        return json_decode($response)->url;
+}

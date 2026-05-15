@@ -45,6 +45,7 @@ function event_type($raw) {
         "notice-notify-title-" => "群聊-头衔变更",
         "notice-friend_add-" => "好友-添加",
         "notice-friend_recall" => "好友-撤回",
+        "notice-bot_offline-" => "账号下线",
         // 自身消息
         "message_sent-private-friend" => "私聊",
         "message_sent-private-group" => "私聊",

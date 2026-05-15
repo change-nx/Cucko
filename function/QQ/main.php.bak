@@ -55,7 +55,7 @@ function 文字($content) {
      case "加群":
      case "退群":
      case "回调":
-        $json["event_id"] = 事件ID;
+        $json["事件_id"] = 事件ID;
         return BOTAPI("/v2/groups/".群号."/messages","POST",json_encode($json));
         break;
    }
@@ -127,7 +127,7 @@ function 图片($image,$content=null) {
      case "加群":
      case "退群":
      case "回调":
-        $json["event_id"] = 事件ID;
+        $json["事件_id"] = 事件ID;
         return BOTAPI("/v2/groups/".群号."/messages","POST",json_encode($json));
         break;
    }
@@ -161,7 +161,7 @@ function 语音($yy) {
      case "加群":
      case "退群":
      case "回调":
-        $json["event_id"] = 事件ID;
+        $json["事件_id"] = 事件ID;
         return BOTAPI("/v2/groups/".群号."/messages","POST",json_encode($json));
         break;
    }
@@ -192,7 +192,7 @@ function 文件($yy,$nm) {
      case "加群":
      case "退群":
      case "回调":
-        $json["event_id"] = 事件ID;
+        $json["事件_id"] = 事件ID;
         return BOTAPI("/v2/groups/".群号."/messages","POST",json_encode($json));
         break;
    }
@@ -225,7 +225,7 @@ function 视频($video) {
      case "加群":
      case "退群":
      case "回调":
-        $json["event_id"] = 事件ID;
+        $json["事件_id"] = 事件ID;
         return BOTAPI("/v2/groups/".群号."/messages","POST",json_encode($json));
         break;
    }
@@ -253,7 +253,7 @@ function 按钮($key) {
      case "加群":
      case "退群":
      case "回调":
-        $json["event_id"] = 事件ID;
+        $json["事件_id"] = 事件ID;
         return BOTAPI("/v2/groups/".群号."/messages","POST",json_encode($json));
         break;
    }
@@ -310,7 +310,7 @@ function 文卡(...$items) {
          case "加群":
          case "退群":
          case "回调":
-           $json["event_id"] = 事件ID;
+           $json["事件_id"] = 事件ID;
            return BOTAPI("/v2/groups/".群号."/messages", "POST", json_encode($json));
          break;
     }
@@ -343,7 +343,7 @@ function 大图($title,$xtitle,$iurl){
          case "加群":
          case "退群":
          case "回调":
-           $json["event_id"] = 事件ID;
+           $json["事件_id"] = 事件ID;
            return BOTAPI("/v2/groups/".群号."/messages", "POST", json_encode($json));
          break;
     }
@@ -379,7 +379,7 @@ function 跳转卡($title,$desc,$image,$tz){
          case "加群":
          case "退群":
          case "回调":
-           $json["event_id"] = 事件ID;
+           $json["事件_id"] = 事件ID;
            return BOTAPI("/v2/groups/".群号."/messages", "POST", json_encode($json));
          break;
     }
@@ -445,7 +445,7 @@ function MD($md, $keyboard = null) {
      case "加群":
      case "退群":
      case "回调":
-        $json["event_id"] = 事件ID;
+        $json["事件_id"] = 事件ID;
         return BOTAPI("/v2/groups/".群号."/messages", "POST", json_encode($json));
         break;
    }

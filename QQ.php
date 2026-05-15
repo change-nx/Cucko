@@ -84,6 +84,7 @@ switch($event) {
         define("事件ID", $raw["id"]);
         define("群号", $raw["d"]["group_openid"]);
         define("消息",$raw["d"]["data"]["resolved"]["button_data"]);
+        define("QQ",$raw["d"]["group_member_openid"]);
         break;
 }
   require("function/QQ/main.php");
