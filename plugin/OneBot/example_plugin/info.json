@@ -1,0 +1,6 @@
+{
+  "id": "example_plugin",
+  "name": "OneBot示例插件",
+  "author": "开发者",
+  "desc": "这是一个OneBot协议的示例插件"
+}

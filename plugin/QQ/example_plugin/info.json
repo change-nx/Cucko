@@ -1,0 +1,6 @@
+{
+  "id": "example_plugin",
+  "name": "示例插件",
+  "author": "开发者",
+  "desc": "这是一个演示如何编写QQ机器人插件的示例"
+}
