@@ -56,7 +56,11 @@ function 文字($content) {
      case "退群":
      case "回调":
         $json["event_id"] = 事件ID;
-        return BOTAPI("/v2/groups/".群号."/messages","POST",json_encode($json));
+        return json_decode(BOTAPI("/v2/groups/".来源."/files", "POST",$json),true);
+        break;
+    case "私聊回调":
+        $json["event_id"] = 事件ID;
+        return BOTAPI("/v2/users/".QQ."/messages","POST",json_encode($json));
         break;
    }
 }
@@ -86,10 +90,11 @@ function 富媒体($type,$image,$name = null) {
            case "退群":
            case "群聊":
            case "回调":
-               return json_decode(BOTAPI("/v2/groups/".来源."/files", "POST",$json),true);
+               return json_decode(BOTAPI("/v2/groups/".群号."/files", "POST",$json),true);
                break;
            case "私聊":
-               return json_decode(BOTAPI("/v2/users/".来源."/files", "POST",$json),true);
+           case "私聊回调":
+               return json_decode(BOTAPI("/v2/users/".QQ."/files", "POST",$json),true);
                break;
         }
 }
@@ -128,7 +133,11 @@ function 图片($image,$content=null) {
      case "退群":
      case "回调":
         $json["event_id"] = 事件ID;
-        return BOTAPI("/v2/groups/".群号."/messages","POST",json_encode($json));
+        return json_decode(BOTAPI("/v2/groups/".来源."/files", "POST",$json),true);
+        break;
+    case "私聊回调":
+        $json["event_id"] = 事件ID;
+        return BOTAPI("/v2/users/".QQ."/messages","POST",json_encode($json));
         break;
    }
 }
@@ -162,7 +171,11 @@ function 语音($yy) {
      case "退群":
      case "回调":
         $json["event_id"] = 事件ID;
-        return BOTAPI("/v2/groups/".群号."/messages","POST",json_encode($json));
+        return json_decode(BOTAPI("/v2/groups/".来源."/files", "POST",$json),true);
+        break;
+    case "私聊回调":
+        $json["event_id"] = 事件ID;
+        return BOTAPI("/v2/users/".QQ."/messages","POST",json_encode($json));
         break;
    }
 }
@@ -193,7 +206,11 @@ function 文件($yy,$nm) {
      case "退群":
      case "回调":
         $json["event_id"] = 事件ID;
-        return BOTAPI("/v2/groups/".群号."/messages","POST",json_encode($json));
+        return json_decode(BOTAPI("/v2/groups/".来源."/files", "POST",$json),true);
+        break;
+    case "私聊回调":
+        $json["event_id"] = 事件ID;
+        return BOTAPI("/v2/users/".QQ."/messages","POST",json_encode($json));
         break;
    }
 }
@@ -228,36 +245,14 @@ function 视频($video) {
         $json["event_id"] = 事件ID;
         return BOTAPI("/v2/groups/".群号."/messages","POST",json_encode($json));
         break;
-   }
-}
-
-
-function 按钮($key) {
-   $json = [
-        "msg_type" => 2,
-        "msg_seq" => mt_rand(1, 9999),
-        "keyboard" => [
-            "id" => $key
-        ]
-   ];
-   
-   switch (事件) {
-     case "群聊":
-        $json["msg_id"] = 消息ID;
-        return BOTAPI("/v2/groups/".群号."/messages","POST",json_encode($json));
-        break;
-     case "私聊":
-        $json["msg_id"] = 消息ID;
+    case "私聊回调":
+        $json["event_id"] = 事件ID;
         return BOTAPI("/v2/users/".QQ."/messages","POST",json_encode($json));
         break;
-     case "加群":
-     case "退群":
-     case "回调":
-        $json["event_id"] = 事件ID;
-        return BOTAPI("/v2/groups/".群号."/messages","POST",json_encode($json));
-        break;
    }
 }
+
+
 
 function 头像($id){
    return "https://q.qlogo.cn/qqapp/".config["appid"]."/{$id}/640";
@@ -313,6 +308,10 @@ function 文卡(...$items) {
            $json["event_id"] = 事件ID;
            return BOTAPI("/v2/groups/".群号."/messages", "POST", json_encode($json));
          break;
+         case "私聊回调":
+           $json["event_id"] = 事件ID;
+           return BOTAPI("/v2/users/".QQ."/messages","POST",json_encode($json));
+           break;
     }
 }
 
@@ -346,6 +345,10 @@ function 大图($title,$xtitle,$iurl){
            $json["event_id"] = 事件ID;
            return BOTAPI("/v2/groups/".群号."/messages", "POST", json_encode($json));
          break;
+         case "私聊回调":
+           $json["event_id"] = 事件ID;
+           return BOTAPI("/v2/users/".QQ."/messages","POST",json_encode($json));
+           break;
     }
 }
 
@@ -382,6 +385,10 @@ function 跳转卡($title,$desc,$image,$tz){
            $json["event_id"] = 事件ID;
            return BOTAPI("/v2/groups/".群号."/messages", "POST", json_encode($json));
          break;
+         case "私聊回调":
+           $json["event_id"] = 事件ID;
+           return BOTAPI("/v2/users/".QQ."/messages","POST",json_encode($json));
+           break;
     }
 }
 
@@ -412,12 +419,18 @@ function 流式(...$msgs){
 }
 
 function 撤回($id){
-   $type = [
-      "群聊"=>"groups",
-      "私聊"=>"users"
-   ];
-   $type = $type[事件];
-   return BOTAPI("/v2/{$type}/".来源."/messages/".$id,"DELETE","");
+    switch (事件) {
+         case "群聊":
+         case "加群":
+         case "退群":
+         case "回调":
+             return BOTAPI("/v2/groups/".群号."/messages/".$id,"DELETE","");
+         break;
+         case "私聊回调":
+         case "私聊":
+             return BOTAPI("/v2/users/".QQ."/messages/".$id,"DELETE","");
+           break;
+    }
 }
 
 function MD($md, $keyboard = null) {
@@ -448,6 +461,10 @@ function MD($md, $keyboard = null) {
         $json["event_id"] = 事件ID;
         return BOTAPI("/v2/groups/".群号."/messages", "POST", json_encode($json));
         break;
+     case "私聊回调":
+           $json["event_id"] = 事件ID;
+           return BOTAPI("/v2/users/".QQ."/messages","POST",json_encode($json));
+           break;
    }
 }
 

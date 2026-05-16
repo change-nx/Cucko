@@ -80,11 +80,16 @@ switch($event) {
         break;
         
     case "INTERACTION_CREATE":
-        define("事件", "回调");
+        if ($raw["d"]["scene"] == "c2c") {
+            define("事件", "私聊回调");
+            define("QQ",$raw["d"]["user_openid"]);
+        } else {
+            define("事件", "回调");
+            define("QQ",$raw["d"]["group_member_openid"]);
+            define("群号", $raw["d"]["group_openid"]);
+        }
         define("事件ID", $raw["id"]);
-        define("群号", $raw["d"]["group_openid"]);
         define("消息",$raw["d"]["data"]["resolved"]["button_data"]);
-        define("QQ",$raw["d"]["group_member_openid"]);
         break;
 }
   require("function/QQ/main.php");
