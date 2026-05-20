@@ -469,7 +469,7 @@ function MD($md, $keyboard = null) {
 }
 
 function MDinput($text,$textt) {
-    return "[](mqqapi://aio/inlinecmd?command=%E6%88%91%E6%98%AF%E5%B0%8F%E5%8D%97%E6%A2%81&enter=false)[{$text}](mqqapi://aio/inlinecmd?command={$textt}&enter=false1)";
+    return "[](mqqapi://aio/inlinecmd?command=%E6%88%91%E6%98%AF%E5%B0%8F%E5%8D%97%E6%A2%81&enter=false)[{{$text}}](mqqapi://aio/inlinecmd?command={{$textt}}&enter=false1)";
 }
 
 function MDfill($text,$textt) {
