@@ -1,6 +1,7 @@
 <?php
 include(__DIR__."/other/qrcode.php");
 include(__DIR__."/other/Time.php");
+include(__DIR__."/other/CronHelper.php");
 
 function wlog($name,$content) {
     $date = date('Y-m-d H:i:s');

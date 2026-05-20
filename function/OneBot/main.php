@@ -1154,3 +1154,57 @@ function 消息详情($id) {
         return false;
     }
 }
+
+function OB_独立_群消息($adapter_id, $group_id, ...$msgs) {
+    global $config, $api, $token;
+    $old_config = $config;
+    $old_api = $api;
+    $old_token = $token;
+    
+    $config = 读("config", $adapter_id, []);
+    $api = $config["API"];
+    $token = $config["APItoken"];
+    
+    $json = [
+        "group_id" => $group_id,
+        "message" => []
+    ];
+    foreach ($msgs as $msg) {
+        $json["message"][] = $msg;
+    }
+    $json = json_encode($json);
+    $result = BOTAPI("/send_group_msg", $json);
+    
+    $config = $old_config;
+    $api = $old_api;
+    $token = $old_token;
+    
+    return $result;
+}
+
+function OB_独立_私消息($adapter_id, $user_id, ...$msgs) {
+    global $config, $api, $token;
+    $old_config = $config;
+    $old_api = $api;
+    $old_token = $token;
+    
+    $config = 读("config", $adapter_id, []);
+    $api = $config["API"];
+    $token = $config["APItoken"];
+    
+    $json = [
+        "user_id" => $user_id,
+        "message" => []
+    ];
+    foreach ($msgs as $msg) {
+        $json["message"][] = $msg;
+    }
+    $json = json_encode($json);
+    $result = BOTAPI("/send_private_msg", $json);
+    
+    $config = $old_config;
+    $api = $old_api;
+    $token = $old_token;
+    
+    return $result;
+}

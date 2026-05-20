@@ -475,3 +475,29 @@ function MDinput($text,$textt) {
 function MDfill($text,$textt) {
     return '<qqbot-cmd-input text="'.$textt.'" show="'.$text.'" reference="false"/>';
 }
+
+function QQ_独立_群文字($adapter_id, $group_id, $content) {
+    global $config;
+    $old_config = $config;
+    $config = 读("config", $adapter_id, []);
+    $result = BOTAPI("/v2/groups/{$group_id}/messages", "POST", json_encode([
+        "content" => $content,
+        "msg_type" => 0,
+        "msg_seq" => rand(1, 99999)
+    ]));
+    $config = $old_config;
+    return $result;
+}
+
+function QQ_独立_私文字($adapter_id, $user_id, $content) {
+    global $config;
+    $old_config = $config;
+    $config = 读("config", $adapter_id, []);
+    $result = BOTAPI("/v2/users/{$user_id}/messages", "POST", json_encode([
+        "content" => $content,
+        "msg_type" => 0,
+        "msg_seq" => rand(1, 99999)
+    ]));
+    $config = $old_config;
+    return $result;
+}
